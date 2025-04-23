@@ -189,15 +189,15 @@ require (
 replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.1.7-0.20210622111912-ef00f8ac3d76
 	github.com/confio/ics23/go => github.com/cosmos/cosmos-sdk/ics23/go v0.8.0
-	github.com/cosmos/iavl => github.com/cryptobadass/plume-iavl v1.0.1
-	github.com/ethereum/go-ethereum => github.com/cryptobadass/go-ethereum v1.0.0
+	github.com/cosmos/iavl => github.com/cryptobadass/plume-iavl v1.0.0
+	github.com/ethereum/go-ethereum => github.com/cryptobadass/go-ethereum v1.0.1
 	// Fix upstream GHSA-h395-qcrw-5vmq vulnerability.
 	// TODO Remove it: https://github.com/cosmos/cosmos-sdk/issues/10409
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-	github.com/plume-protocol/plume-db => github.com/cryptobadass/plume-db v1.0.1
+	github.com/plume-protocol/plume-db => github.com/cryptobadass/plume-db v1.0.0
 	// v0.0.47-0.20250417011440-3c2ca436b774
-	github.com/plume-protocol/plume-tm-db => github.com/cryptobadass/plume-tm-db v1.0.1
+	github.com/plume-protocol/plume-tm-db => github.com/cryptobadass/plume-tm-db v1.0.0
 	// Latest goleveldb is broken, we have to stick to this version
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
 	github.com/tendermint/tendermint => github.com/cryptobadass/plume-tendermint v1.0.0
