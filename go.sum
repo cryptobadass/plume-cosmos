@@ -245,8 +245,8 @@ github.com/creachadair/taskgroup v0.3.2 h1:zlfutDS+5XG40AOxcHDSThxKzns8Tnr9jnr6V
 github.com/creachadair/taskgroup v0.3.2/go.mod h1:wieWwecHVzsidg2CsUnFinW1faVN4+kq+TDlRJQ0Wbk=
 github.com/creack/pty v1.1.7/go.mod h1:lj5s0c3V2DBrqTV7llrYr5NG6My20zk30Fl46Y7DoTY=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
-github.com/cryptobadass/go-ethereum v1.0.1 h1:n5XDv56gxu+NamM9IHsY8qUHn9lT20LulCbK9TOBWV4=
-github.com/cryptobadass/go-ethereum v1.0.1/go.mod h1:kcRZmuzRn1lVejiFNTz4l4W7imnpq1bDAnuKS/RyhbQ=
+github.com/cryptobadass/go-ethereum v1.0.0 h1:uN6YFuV6iOwsoepeEVJ6xaFkpB48RkH5ZTyLYgBWeuY=
+github.com/cryptobadass/go-ethereum v1.0.0/go.mod h1:kcRZmuzRn1lVejiFNTz4l4W7imnpq1bDAnuKS/RyhbQ=
 github.com/cryptobadass/plume-db v1.0.1 h1:sEkKAz+U6gWFwKzRPj6hR4v0D1mtDY5mKUW7MEaXMHU=
 github.com/cryptobadass/plume-db v1.0.1/go.mod h1:qntCEIPxe8VMlYZvvL2qlBRJQUHyON9/ss4gkYd2I08=
 github.com/cryptobadass/plume-iavl v1.0.1 h1:Y74TyBe0W/66P3NKFUEj4/RbczE9n7fRCnEbRt7+XGs=
