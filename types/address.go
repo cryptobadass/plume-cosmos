@@ -470,7 +470,7 @@ func ConsAddressFromBech32(address string) (addr ConsAddress, err error) {
 	}
 
 	bech32PrefixConsAddr := GetConfig().GetBech32ConsensusAddrPrefix()
-	fmt.Printf("ConsAddressFromBech32: %s \n", bech32PrefixConsAddr)
+
 	bz, err := GetFromBech32(address, bech32PrefixConsAddr)
 	if err != nil {
 		return nil, err

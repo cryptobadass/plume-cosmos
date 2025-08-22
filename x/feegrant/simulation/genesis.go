@@ -23,8 +23,8 @@ func genFeeGrants(r *rand.Rand, accounts []simtypes.Account) []feegrant.Grant {
 
 func generateRandomAllowances(granter, grantee sdk.AccAddress, r *rand.Rand) feegrant.Grant {
 	allowances := make([]feegrant.Grant, 3)
-	spendLimit := sdk.NewCoins(sdk.NewCoin("plume", sdk.NewInt(100)))
-	periodSpendLimit := sdk.NewCoins(sdk.NewCoin("plume", sdk.NewInt(10)))
+	spendLimit := sdk.NewCoins(sdk.NewCoin("uplume", sdk.NewInt(100)))
+	periodSpendLimit := sdk.NewCoins(sdk.NewCoin("uplume", sdk.NewInt(10)))
 
 	basic := feegrant.BasicAllowance{
 		SpendLimit: spendLimit,
