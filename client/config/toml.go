@@ -17,7 +17,7 @@ const defaultConfigTemplate = `# This is a TOML config file.
 # For more information, see https://github.com/toml-lang/toml
 
 ###############################################################################
-###                           Client Configuration                          ###
+###                           Client Configuration                            ###
 ###############################################################################
 
 # The network chain ID

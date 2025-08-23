@@ -33,7 +33,7 @@ The IBC module for the SDK has moved to its [own repository](https://github.com/
 To query for current fee params:
 
 ```bash
-plume q params feesparams 
+plume q params feesparams
 ```
 
 To update the feesparams, use a governance proposal like such:
@@ -47,13 +47,13 @@ To update the feesparams, use a governance proposal like such:
       "subspace": "params",
       "key": "FeesParams",
       "value": {
-	  "global_minimum_gas_prices": [
-    		{
-      		"denom": "uplume",
-      		"amount":	 "1.00000000000000000"
-    		}
-  	]
- 	}
+        "global_minimum_gas_prices": [
+          {
+            "denom": "uplume",
+            "amount": "1.00000000000000000"
+          }
+        ]
+      }
     }
   ],
   "deposit": "1000000000uplume",

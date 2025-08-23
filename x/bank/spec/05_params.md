@@ -6,10 +6,10 @@ order: 5
 
 The bank module contains the following parameters:
 
-| Key                | Type          | Example                            |
-| ------------------ | ------------- | ---------------------------------- |
+| Key                | Type          | Example                             |
+| ------------------ | ------------- | ----------------------------------- |
 | SendEnabled        | []SendEnabled | [{denom: "uplume", enabled: true }] |
-| DefaultSendEnabled | bool          | true                               |
+| DefaultSendEnabled | bool          | true                                |
 
 ## SendEnabled
 

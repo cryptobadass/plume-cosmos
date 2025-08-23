@@ -35,35 +35,35 @@ Ref: https://keepachangelog.com/en/1.0.0/
 
 # Changelog
 
-
 ## Current - 2022-10-21
 
 ### Bug Fixes
 
-* [\#2](https://github.com/plume-protocol/plume-cosmos/pull/2) Fix GRPC bug
-* [\#88](https://github.com/plume-protocol/plume-cosmos/pull/88) Fix Rollback bug not actually rolling back CMS version
-* [https://github.com/cosmos/cosmos-sdk/commit/4f1cc3aeac7884cf1f522b87af04a455e92db7cf]
+- [\#2](https://github.com/plume-protocol/plume-cosmos/pull/2) Fix GRPC bug
+- [\#88](https://github.com/plume-protocol/plume-cosmos/pull/88) Fix Rollback bug not actually rolling back CMS version
+- [https://github.com/cosmos/cosmos-sdk/commit/4f1cc3aeac7884cf1f522b87af04a455e92db7cf]
 
 ### Improvements
 
-* [\#1](https://github.com/plume-protocol/plume-cosmos/pull/1) Integrate Cosmos with plume-tendermint and ABCI++
-* [\#14](https://github.com/plume-protocol/plume-cosmos/pull/14) Integrate Cosmos with Tendermint tracing
-* (x/auth/vesting) [\#11652](https://github.com/cosmos/cosmos-sdk/pull/11652) Add util functions for `Period(s)`
-* [\#14168](https://github.com/cosmos/cosmos-sdk/pull/14168) perf: store/cachekv: preallocate kvL in dirtyItems which gets appended too
-* [\#10024](https://github.com/cosmos/cosmos-sdk/pull/10024) fix!: store/cachekv: reduce growth factor for iterator ranging using binary searches #10024
+- [\#1](https://github.com/plume-protocol/plume-cosmos/pull/1) Integrate Cosmos with plume-tendermint and ABCI++
+- [\#14](https://github.com/plume-protocol/plume-cosmos/pull/14) Integrate Cosmos with Tendermint tracing
+- (x/auth/vesting) [\#11652](https://github.com/cosmos/cosmos-sdk/pull/11652) Add util functions for `Period(s)`
+- [\#14168](https://github.com/cosmos/cosmos-sdk/pull/14168) perf: store/cachekv: preallocate kvL in dirtyItems which gets appended too
+- [\#10024](https://github.com/cosmos/cosmos-sdk/pull/10024) fix!: store/cachekv: reduce growth factor for iterator ranging using binary searches #10024
 
 ### Features
-* [\#17](https://github.com/plume-protocol/plume-cosmos/pull/17) Support SR25519 algorithm for client transaction signing
-* [\#23](https://github.com/plume-protocol/plume-cosmos/pull/23) Add priority to CheckTx based on gas fees
-* (x/accesscontrol) [\#24](https://github.com/plume-protocol/plume-cosmos/pull/24) Add AccessControl module
-* [\#27](https://github.com/plume-protocol/plume-cosmos/pull/27) Add tx channels for parallel DeliverTx signaling
-* (x/accesscontrol) [\#30](https://github.com/plume-protocol/plume-cosmos/pull/30) Add resource hierarchy helper to build resource dependencies
-* (x/accesscontrol) [\#33](https://github.com/plume-protocol/plume-cosmos/pull/33) Add gov proposal handler for x/accesscontrol
-* (x/accesscontrol) [\#36](https://github.com/plume-protocol/plume-cosmos/pull/36) Add dependency DAG to x/accesscontrol
-* (x/accesscontrol) [\#41](https://github.com/plume-protocol/plume-cosmos/pull/41) Add ante dependency decorator to define dependencies
-* (x/accesscontrol) [\#53](https://github.com/plume-protocol/plume-cosmos/pull/53) Add wasm dependency to accesscontrol keeper
-* [\#58](https://github.com/plume-protocol/plume-cosmos/pull/58) Lazy deposits all module accounts during EndBlock for parallel DeliverTx
-* (x/accesscontrol) [\#59](https://github.com/plume-protocol/plume-cosmos/pull/59) Add gov proposal type for wasm dependency mapping updates
-* [\#61](https://github.com/plume-protocol/plume-cosmos/pull/61) Add deferred withdrawl for module accounts
-* [\#63](https://github.com/plume-protocol/plume-cosmos/pull/63) Add support for deferred mint/burn from the module accounts
-* [\#88](https://github.com/plume-protocol/plume-cosmos/pull/88) Add support for hard rollbacks
+
+- [\#17](https://github.com/plume-protocol/plume-cosmos/pull/17) Support SR25519 algorithm for client transaction signing
+- [\#23](https://github.com/plume-protocol/plume-cosmos/pull/23) Add priority to CheckTx based on gas fees
+- (x/accesscontrol) [\#24](https://github.com/plume-protocol/plume-cosmos/pull/24) Add AccessControl module
+- [\#27](https://github.com/plume-protocol/plume-cosmos/pull/27) Add tx channels for parallel DeliverTx signaling
+- (x/accesscontrol) [\#30](https://github.com/plume-protocol/plume-cosmos/pull/30) Add resource hierarchy helper to build resource dependencies
+- (x/accesscontrol) [\#33](https://github.com/plume-protocol/plume-cosmos/pull/33) Add gov proposal handler for x/accesscontrol
+- (x/accesscontrol) [\#36](https://github.com/plume-protocol/plume-cosmos/pull/36) Add dependency DAG to x/accesscontrol
+- (x/accesscontrol) [\#41](https://github.com/plume-protocol/plume-cosmos/pull/41) Add ante dependency decorator to define dependencies
+- (x/accesscontrol) [\#53](https://github.com/plume-protocol/plume-cosmos/pull/53) Add wasm dependency to accesscontrol keeper
+- [\#58](https://github.com/plume-protocol/plume-cosmos/pull/58) Lazy deposits all module accounts during EndBlock for parallel DeliverTx
+- (x/accesscontrol) [\#59](https://github.com/plume-protocol/plume-cosmos/pull/59) Add gov proposal type for wasm dependency mapping updates
+- [\#61](https://github.com/plume-protocol/plume-cosmos/pull/61) Add deferred withdrawl for module accounts
+- [\#63](https://github.com/plume-protocol/plume-cosmos/pull/63) Add support for deferred mint/burn from the module accounts
+- [\#88](https://github.com/plume-protocol/plume-cosmos/pull/88) Add support for hard rollbacks

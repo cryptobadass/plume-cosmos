@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"encoding/hex"
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	"io"
 	"io/ioutil"
 	"os"
@@ -250,7 +249,7 @@ func (ks keystore) ExportPrivateKeyObject(uid string) ([]byte, error) {
 			if err != nil {
 				return nil, err
 			}
-			priv = privKeys.Bytes()
+			priv = legacy.Cdc.MustMarshal(privKeys)
 		}
 
 	case ledgerInfo, offlineInfo, multiInfo:
@@ -287,11 +286,10 @@ func (ks keystore) ImportPrivKey(uid, armor, passphrase string) error {
 		}
 		privKey = typedKey
 	} else {
-		secpKey := &secp256k1.PrivKey{}
-		if err := secpKey.UnmarshalAmino(privKeyBytes); err != nil {
+		privKey, err = legacy.PrivKeyFromBytes(privKeyBytes)
+		if err != nil {
 			return err
 		}
-		privKey = secpKey
 	}
 
 	_, err = ks.writeLocalKey(uid, privKey, hd.PubKeyType(algo))
