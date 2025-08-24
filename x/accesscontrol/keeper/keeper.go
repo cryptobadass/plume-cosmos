@@ -611,7 +611,7 @@ func (k Keeper) BuildDependencyDag(ctx sdk.Context, anteDepGen sdk.AnteDepGenera
 // Measures the time taken to build dependency dag
 // Metric Names:
 //
-//  plume_dag_build_duration_miliseconds
+//	plume_dag_build_duration_miliseconds
 //	plume_dag_build_duration_miliseconds_count
 //	plume_dag_build_duration_miliseconds_sum
 func MeasureBuildDagDuration(start time.Time, method string) {
