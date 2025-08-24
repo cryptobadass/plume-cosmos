@@ -197,8 +197,8 @@ replace (
 	github.com/plume-protocol/plume-tm-db => github.com/cryptobadass/plume-tm-db v1.0.0
 	// Latest goleveldb is broken, we have to stick to this version
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
-	// v1.0.3 -> v0.5.2
-	github.com/tendermint/tendermint => github.com/cryptobadass/plume-tendermint v1.0.3
+	// v1.0.4 -> v0.5.4
+	github.com/tendermint/tendermint => github.com/cryptobadass/plume-tendermint v1.0.4
 	// latest grpc doesn't work with with our modified proto compiler, so we need to enforce
 	// the following version across all dependencies.
 	google.golang.org/grpc => google.golang.org/grpc v1.33.2

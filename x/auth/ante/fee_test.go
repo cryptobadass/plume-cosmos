@@ -399,8 +399,8 @@ func (suite *AnteTestSuite) TestMultipleGlobalMinimumFees() {
 	)
 	suite.app.ParamsKeeper.SetFeesParams(suite.ctx, feeParam)
 	suite.ctx = suite.ctx.WithMinGasPrices([]sdk.DecCoin{
-		sdk.NewDecCoinFromDec("atom", sdk.NewDec(50)), // less than global minimum
-		sdk.NewDecCoinFromDec("uplume", sdk.NewDec(1)),  // less than global minimum
+		sdk.NewDecCoinFromDec("atom", sdk.NewDec(50)),  // less than global minimum
+		sdk.NewDecCoinFromDec("uplume", sdk.NewDec(1)), // less than global minimum
 	})
 	tx, _ = suite.createTestTxWithGas(msg, 750000, 15000, priv1, "atom")
 	_, err = antehandler(suite.ctx, tx, false)
@@ -459,8 +459,8 @@ func (suite *AnteTestSuite) TestMultipleGlobalMinimumFees() {
 	)
 	suite.app.ParamsKeeper.SetFeesParams(suite.ctx, feeParam)
 	suite.ctx = suite.ctx.WithMinGasPrices([]sdk.DecCoin{
-		sdk.NewDecCoinFromDec("atom", sdk.NewDec(100)), // greater than global minimum
-		sdk.NewDecCoinFromDec("uplume", sdk.NewDec(10)),  // greater than global minimum
+		sdk.NewDecCoinFromDec("atom", sdk.NewDec(100)),  // greater than global minimum
+		sdk.NewDecCoinFromDec("uplume", sdk.NewDec(10)), // greater than global minimum
 	})
 	tx, _ = suite.createTestTxWithGas(msg, 1500000, 15000, priv1, "atom")
 	_, err = antehandler(suite.ctx, tx, false)

@@ -3,8 +3,9 @@ package proposal
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/tendermint/tendermint/types"
 	"strings"
+
+	"github.com/tendermint/tendermint/types"
 
 	yaml "gopkg.in/yaml.v2"
 
