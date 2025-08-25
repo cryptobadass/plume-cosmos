@@ -32,8 +32,8 @@ require (
 	github.com/magiconair/properties v1.8.6
 	github.com/mattn/go-isatty v0.0.19
 	github.com/pkg/errors v0.9.1
-	github.com/plume-protocol/plume-db v0.0.27-0.20240123064153-d6dfa112e760
-	github.com/plume-protocol/plume-tm-db v0.0.5
+	github.com/plume-protocol/plume-db v0.0.0-00010101000000-000000000000
+	github.com/plume-protocol/plume-tm-db v0.0.0-00010101000000-000000000000
 	github.com/prometheus/client_golang v1.14.0
 	github.com/prometheus/common v0.42.0
 	github.com/rakyll/statik v0.1.7
