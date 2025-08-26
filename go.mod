@@ -32,8 +32,8 @@ require (
 	github.com/magiconair/properties v1.8.6
 	github.com/mattn/go-isatty v0.0.19
 	github.com/pkg/errors v0.9.1
-	github.com/plume-protocol/plume-db v0.0.0-00010101000000-000000000000
-	github.com/plume-protocol/plume-tm-db v0.0.0-00010101000000-000000000000
+	github.com/plume-protocol/plume-db v0.0.27-0.20240123064153-d6dfa112e760
+	github.com/plume-protocol/plume-tm-db v0.0.5
 	github.com/prometheus/client_golang v1.14.0
 	github.com/prometheus/common v0.42.0
 	github.com/rakyll/statik v0.1.7
@@ -192,8 +192,8 @@ replace (
 	// TODO Remove it: https://github.com/cosmos/cosmos-sdk/issues/10409
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-	// v1.0.1 -> v0.0.46
-	github.com/plume-protocol/plume-db => github.com/cryptobadass/plume-db v1.0.1
+	// v1.0.6 -> v0.0.51
+	github.com/plume-protocol/plume-db => github.com/cryptobadass/plume-db v1.0.6
 	github.com/plume-protocol/plume-tm-db => github.com/cryptobadass/plume-tm-db v1.0.0
 	// Latest goleveldb is broken, we have to stick to this version
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7

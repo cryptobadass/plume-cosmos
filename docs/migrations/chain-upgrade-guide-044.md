@@ -44,7 +44,7 @@ With the update to `v0.44`, new server configuration options have been added to 
 
 The following example will walk through the upgrade process using `simapp` as our blockchain application. We will be upgrading `simapp` from v0.42 to v0.44. We will be building the upgrade binary ourselves and enabling the auto-restart option.
 
-*Note: In this example, we will be starting a new chain from `v0.42`. The binary for this version will be the genesis binary. For validators using Cosmovisor for the first time, the binary for the current version of the chain should be used as the genesis binary (i.e. the starting binary). For more information, see [Cosmovisor](../run-node/cosmovisor.html).*
+_Note: In this example, we will be starting a new chain from `v0.42`. The binary for this version will be the genesis binary. For validators using Cosmovisor for the first time, the binary for the current version of the chain should be used as the genesis binary (i.e. the starting binary). For more information, see [Cosmovisor](../run-node/cosmovisor.html)._
 
 ### Initial Setup
 
