@@ -247,10 +247,10 @@ github.com/creack/pty v1.1.7/go.mod h1:lj5s0c3V2DBrqTV7llrYr5NG6My20zk30Fl46Y7Do
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
 github.com/cryptobadass/go-ethereum v1.13.5-plume-21 h1:HeK4mE3LtcYBDJYpGTQOvDCkhwYxZDttABPiDdFnwb4=
 github.com/cryptobadass/go-ethereum v1.13.5-plume-21/go.mod h1:kcRZmuzRn1lVejiFNTz4l4W7imnpq1bDAnuKS/RyhbQ=
-github.com/cryptobadass/plume-db v1.0.6 h1:lN0uHzmQDDZ+9PtLuPNWQn5cbzqlNGmE0P+3lgQFx0I=
-github.com/cryptobadass/plume-db v1.0.6/go.mod h1:spDzZIzceD7Fbn1fno+vIWVUvem57izADxnv/djh2vc=
-github.com/cryptobadass/plume-iavl v0.1.9 h1:ssF2Wb0e3H5B/Hhb54Zgb00IEdN83McUCklXZjyUxvk=
-github.com/cryptobadass/plume-iavl v0.1.9/go.mod h1:7PfkEVT5dcoQE+s/9KWdoXJ8VVVP1QpYYPLdxlkSXFk=
+github.com/cryptobadass/plume-db v1.0.7 h1:815+AONzlmCn4K2AZUAaMVjhS9rj2KanlItrySKfLBA=
+github.com/cryptobadass/plume-db v1.0.7/go.mod h1:bzFafHk6Wrn4kwk3Ioy4/pSqpwqOyi2vQOPqhd0j7Mk=
+github.com/cryptobadass/plume-iavl v1.0.3 h1:TnInmc3TGqNcDFjIgLV7jPFBkrSbuzMS4jDcogiK2SA=
+github.com/cryptobadass/plume-iavl v1.0.3/go.mod h1:qRf8QYUPfrAO7K6VDB2B2l/N7K5L76OorioGBcJBIbw=
 github.com/cryptobadass/plume-tendermint v1.0.7 h1:lkLKiHa1tv83SgXWyc5Z4soPAoCCKC/DGZG/0NMhzH8=
 github.com/cryptobadass/plume-tendermint v1.0.7/go.mod h1:hLgRpS2d6VM8XzlhEtFeosCYkpuviU2ztqmOairIivc=
 github.com/cryptobadass/plume-tm-db v1.0.0 h1:OtsRTMmKskeqR5w28gybFlH1Rg6rvevhTETSuB6wf1c=
