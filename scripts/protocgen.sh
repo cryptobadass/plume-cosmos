@@ -14,11 +14,11 @@ protoc_gen_gocosmos() {
 protoc_gen_gocosmos
 PATH="${PATH}:${HOME}/go/bin"
 
-proto_dirs=$(find ./proto -path -prune -o -name '*.proto' -print0 | xargs -0 -n1 dirname | sort | uniq)
-for dir in $proto_dirs; do
+proto_files=$(find ./proto -type f -name '*.proto' | sort)
+for file in $proto_files; do
   buf generate \
     --template proto/buf.gen.yaml \
-    --path "${dir}"
+    --path "${file}"
 done
 
 # command to generate docs using protoc-gen-doc

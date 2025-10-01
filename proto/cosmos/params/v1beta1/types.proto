@@ -20,6 +20,6 @@ message CosmosGasParams {
 }
 
 message GenesisState {
-  FeesParams fees_params = 1 [(gogoproto.nullable) = false];
+  FeesParams      fees_params       = 1 [(gogoproto.nullable) = false];
   CosmosGasParams cosmos_gas_params = 2 [(gogoproto.nullable) = false];
 }

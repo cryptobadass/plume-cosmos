@@ -5,8 +5,8 @@ package sr25519
 
 import (
 	fmt "fmt"
+	proto "github.com/cosmos/gogoproto/proto"
 	_ "github.com/gogo/protobuf/gogoproto"
-	proto "github.com/gogo/protobuf/proto"
 	github_com_tendermint_tendermint_crypto_sr25519 "github.com/tendermint/tendermint/crypto/sr25519"
 	io "io"
 	math "math"

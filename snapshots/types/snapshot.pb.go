@@ -5,8 +5,8 @@ package types
 
 import (
 	fmt "fmt"
+	proto "github.com/cosmos/gogoproto/proto"
 	_ "github.com/gogo/protobuf/gogoproto"
-	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
 	math_bits "math/bits"
@@ -150,6 +150,7 @@ type SnapshotItem struct {
 	// item is the specific type of snapshot item.
 	//
 	// Types that are valid to be assigned to Item:
+	//
 	//	*SnapshotItem_Store
 	//	*SnapshotItem_IAVL
 	//	*SnapshotItem_Extension

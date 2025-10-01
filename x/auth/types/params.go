@@ -15,6 +15,7 @@ const (
 	DefaultTxSizeCostPerByte      uint64 = 10
 	DefaultSigVerifyCostED25519   uint64 = 590
 	DefaultSigVerifyCostSecp256k1 uint64 = 1000
+	DefaultSigVerifyCostPQC       uint64 = 1500
 )
 
 // Parameter keys
@@ -24,6 +25,7 @@ var (
 	KeyTxSizeCostPerByte      = []byte("TxSizeCostPerByte")
 	KeySigVerifyCostED25519   = []byte("SigVerifyCostED25519")
 	KeySigVerifyCostSecp256k1 = []byte("SigVerifyCostSecp256k1")
+	KeySigVerifyCostPQC       = []byte("SigVerifyCostPQC")
 	KeyDisableSeqnoCheck      = []byte("KeyDisableSeqnoCheck")
 )
 
@@ -31,7 +33,7 @@ var _ paramtypes.ParamSet = &Params{}
 
 // NewParams creates a new Params object
 func NewParams(
-	maxMemoCharacters, txSigLimit, txSizeCostPerByte, sigVerifyCostED25519, sigVerifyCostSecp256k1 uint64,
+	maxMemoCharacters, txSigLimit, txSizeCostPerByte, sigVerifyCostED25519, sigVerifyCostSecp256k1, sigVerifyCostPQC uint64,
 ) Params {
 	return Params{
 		MaxMemoCharacters:      maxMemoCharacters,
@@ -39,6 +41,7 @@ func NewParams(
 		TxSizeCostPerByte:      txSizeCostPerByte,
 		SigVerifyCostED25519:   sigVerifyCostED25519,
 		SigVerifyCostSecp256k1: sigVerifyCostSecp256k1,
+		SigVerifyCostPQC:       sigVerifyCostPQC,
 	}
 }
 
@@ -56,6 +59,7 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 		paramtypes.NewParamSetPair(KeyTxSizeCostPerByte, &p.TxSizeCostPerByte, validateTxSizeCostPerByte),
 		paramtypes.NewParamSetPair(KeySigVerifyCostED25519, &p.SigVerifyCostED25519, validateSigVerifyCostED25519),
 		paramtypes.NewParamSetPair(KeySigVerifyCostSecp256k1, &p.SigVerifyCostSecp256k1, validateSigVerifyCostSecp256k1),
+		paramtypes.NewParamSetPair(KeySigVerifyCostPQC, &p.SigVerifyCostPQC, validateSigVerifyCostPQC),
 		paramtypes.NewParamSetPair(KeyDisableSeqnoCheck, &p.DisableSeqnoCheck, func(i interface{}) error { return nil }),
 	}
 }
@@ -68,6 +72,7 @@ func DefaultParams() Params {
 		TxSizeCostPerByte:      DefaultTxSizeCostPerByte,
 		SigVerifyCostED25519:   DefaultSigVerifyCostED25519,
 		SigVerifyCostSecp256k1: DefaultSigVerifyCostSecp256k1,
+		SigVerifyCostPQC:       DefaultSigVerifyCostPQC,
 	}
 }
 
@@ -128,6 +133,19 @@ func validateSigVerifyCostSecp256k1(i interface{}) error {
 	return nil
 }
 
+func validateSigVerifyCostPQC(i interface{}) error {
+	v, ok := i.(uint64)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
+	}
+
+	if v == 0 {
+		return fmt.Errorf("invalid PQC signature verification cost: %d", v)
+	}
+
+	return nil
+}
+
 func validateMaxMemoCharacters(i interface{}) error {
 	v, ok := i.(uint64)
 	if !ok {
@@ -165,6 +183,9 @@ func (p Params) Validate() error {
 	if err := validateSigVerifyCostSecp256k1(p.SigVerifyCostSecp256k1); err != nil {
 		return err
 	}
+	if err := validateSigVerifyCostPQC(p.SigVerifyCostPQC); err != nil {
+		return err
+	}
 	if err := validateMaxMemoCharacters(p.MaxMemoCharacters); err != nil {
 		return err
 	}
@@ -178,4 +199,8 @@ func (p Params) Validate() error {
 func (p *Params) GetSr25519VerifyCost() uint64 {
 	// TODO:: define param for sr25519 once its confirmed that it will be supported
 	return p.SigVerifyCostED25519
+}
+
+func (p *Params) GetPQCVerifyCost() uint64 {
+	return p.SigVerifyCostPQC
 }

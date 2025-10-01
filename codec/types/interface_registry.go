@@ -7,7 +7,8 @@ import (
 
 	"github.com/gogo/protobuf/jsonpb"
 
-	"github.com/gogo/protobuf/proto"
+	cosmosproto "github.com/cosmos/gogoproto/proto"
+	gogoproto "github.com/gogo/protobuf/proto"
 )
 
 var (
@@ -49,14 +50,14 @@ type InterfaceRegistry interface {
 	//
 	// Ex:
 	//   registry.RegisterInterface("cosmos.base.v1beta1.Msg", (*sdk.Msg)(nil))
-	RegisterInterface(protoName string, iface interface{}, impls ...proto.Message)
+	RegisterInterface(protoName string, iface interface{}, impls ...gogoproto.Message)
 
 	// RegisterImplementations registers impls as concrete implementations of
 	// the interface iface.
 	//
 	// Ex:
 	//  registry.RegisterImplementations((*sdk.Msg)(nil), &MsgSend{}, &MsgMultiSend{})
-	RegisterImplementations(iface interface{}, impls ...proto.Message)
+	RegisterImplementations(iface interface{}, impls ...gogoproto.Message)
 
 	// ListAllInterfaces list the type URLs of all registered interfaces.
 	ListAllInterfaces() []string
@@ -107,7 +108,7 @@ func NewInterfaceRegistry() InterfaceRegistry {
 	}
 }
 
-func (registry *interfaceRegistry) RegisterInterface(protoName string, iface interface{}, impls ...proto.Message) {
+func (registry *interfaceRegistry) RegisterInterface(protoName string, iface interface{}, impls ...gogoproto.Message) {
 	typ := reflect.TypeOf(iface)
 	if typ.Elem().Kind() != reflect.Interface {
 		panic(fmt.Errorf("%T is not an interface type", iface))
@@ -121,9 +122,9 @@ func (registry *interfaceRegistry) RegisterInterface(protoName string, iface int
 //
 // This function PANICs if different concrete types are registered under the
 // same typeURL.
-func (registry *interfaceRegistry) RegisterImplementations(iface interface{}, impls ...proto.Message) {
+func (registry *interfaceRegistry) RegisterImplementations(iface interface{}, impls ...gogoproto.Message) {
 	for _, impl := range impls {
-		typeURL := "/" + proto.MessageName(impl)
+		typeURL := "/" + cosmosproto.MessageName(impl)
 		registry.registerImpl(iface, typeURL, impl)
 	}
 }
@@ -133,7 +134,7 @@ func (registry *interfaceRegistry) RegisterImplementations(iface interface{}, im
 //
 // This function PANICs if different concrete types are registered under the
 // same typeURL.
-func (registry *interfaceRegistry) RegisterCustomTypeURL(iface interface{}, typeURL string, impl proto.Message) {
+func (registry *interfaceRegistry) RegisterCustomTypeURL(iface interface{}, typeURL string, impl gogoproto.Message) {
 	registry.registerImpl(iface, typeURL, impl)
 }
 
@@ -142,7 +143,7 @@ func (registry *interfaceRegistry) RegisterCustomTypeURL(iface interface{}, type
 //
 // This function PANICs if different concrete types are registered under the
 // same typeURL.
-func (registry *interfaceRegistry) registerImpl(iface interface{}, typeURL string, impl proto.Message) {
+func (registry *interfaceRegistry) registerImpl(iface interface{}, typeURL string, impl gogoproto.Message) {
 	ityp := reflect.TypeOf(iface).Elem()
 	imap, found := registry.interfaceImpls[ityp]
 	if !found {
@@ -214,7 +215,7 @@ func (registry *interfaceRegistry) UnpackAny(any *Any, iface interface{}) error 
 	return unpacker.UnpackAny(any, iface)
 }
 
-var protoMessageType = reflect.TypeOf((*proto.Message)(nil)).Elem()
+var protoMessageType = reflect.TypeOf((*cosmosproto.Message)(nil)).Elem()
 
 // sharedCounter is a type that encapsulates a counter value
 type sharedCounter struct {
@@ -290,8 +291,8 @@ func (r *statefulUnpacker) UnpackAny(any *Any, iface interface{}) error {
 		return fmt.Errorf("can't proto unmarshal %T", typ)
 	}
 
-	msg := reflect.New(typ.Elem()).Interface().(proto.Message)
-	err := proto.Unmarshal(any.Value, msg)
+	msg := reflect.New(typ.Elem()).Interface().(cosmosproto.Message)
+	err := cosmosproto.Unmarshal(any.Value, msg)
 	if err != nil {
 		return err
 	}
@@ -315,13 +316,13 @@ func (r *statefulUnpacker) UnpackAny(any *Any, iface interface{}) error {
 // Resolve returns the proto message given its typeURL. It works with types
 // registered with RegisterInterface/RegisterImplementations, as well as those
 // registered with RegisterWithCustomTypeURL.
-func (registry *interfaceRegistry) Resolve(typeURL string) (proto.Message, error) {
+func (registry *interfaceRegistry) Resolve(typeURL string) (gogoproto.Message, error) {
 	typ, found := registry.typeURLMap[typeURL]
 	if !found {
 		return nil, fmt.Errorf("unable to resolve type URL %s", typeURL)
 	}
 
-	msg, ok := reflect.New(typ.Elem()).Interface().(proto.Message)
+	msg, ok := reflect.New(typ.Elem()).Interface().(gogoproto.Message)
 	if !ok {
 		return nil, fmt.Errorf("can't resolve type URL %s", typeURL)
 	}

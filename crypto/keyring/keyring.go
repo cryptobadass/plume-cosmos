@@ -4,13 +4,15 @@ import (
 	"bufio"
 	"encoding/hex"
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sort"
 	"strings"
+
+	"github.com/cosmos/cosmos-sdk/crypto/keys/pqc"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 
 	"github.com/99designs/keyring"
 	bip39 "github.com/cosmos/go-bip39"
@@ -198,7 +200,7 @@ type keystore struct {
 func newKeystore(kr keyring.Keyring, backend string, opts ...Option) keystore {
 	// Default options for keybase
 	options := Options{
-		SupportedAlgos:       SigningAlgoList{hd.Sr25519, hd.Secp256k1},
+		SupportedAlgos:       SigningAlgoList{hd.Sr25519, hd.Secp256k1, hd.PQC},
 		SupportedAlgosLedger: SigningAlgoList{hd.Sr25519, hd.Secp256k1},
 	}
 
@@ -286,6 +288,12 @@ func (ks keystore) ImportPrivKey(uid, armor, passphrase string) error {
 			return err
 		}
 		privKey = typedKey
+	} else if algo == string(hd.PQCType) {
+		typedKey := &pqc.PrivKey{}
+		if err := typedKey.UnmarshalAmino(privKeyBytes); err != nil {
+			return err
+		}
+		privKey = typedKey
 	} else {
 		secpKey := &secp256k1.PrivKey{}
 		if err := secpKey.UnmarshalAmino(privKeyBytes); err != nil {
@@ -319,6 +327,12 @@ func (ks keystore) Sign(uid string, msg []byte) ([]byte, types.PubKey, error) {
 		if i.Algo == hd.Sr25519Type {
 			typedPriv := &sr25519.PrivKey{}
 			if err := typedPriv.UnmarshalJSON([]byte(i.PrivKeyArmor)); err != nil {
+				return nil, nil, err
+			}
+			priv = typedPriv
+		} else if i.Algo == hd.PQCType {
+			typedPriv := &pqc.PrivKey{}
+			if err := typedPriv.UnmarshalAmino([]byte(i.PrivKeyArmor)); err != nil {
 				return nil, nil, err
 			}
 			priv = typedPriv
@@ -746,6 +760,9 @@ func (ks keystore) writeLocalKey(name string, priv types.PrivKey, algo hd.PubKey
 			return nil, err
 		}
 		info = newLocalInfo(name, pub, string(jsonBytes), algo)
+	} else if algo == hd.PQCType {
+		// PQC keys use standard amino marshaling
+		info = newLocalInfo(name, pub, string(legacy.Cdc.MustMarshal(priv)), algo)
 	} else {
 		info = newLocalInfo(name, pub, string(legacy.Cdc.MustMarshal(priv)), algo)
 	}

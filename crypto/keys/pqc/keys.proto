@@ -1,0 +1,18 @@
+syntax = "proto3";
+package pqc;
+
+option go_package = "github.com/cosmos/cosmos-sdk/crypto/keys/pqc";
+
+// PrivKey defines a PQC private key
+message PrivKey {
+  bytes  key      = 1;
+  string key_type = 2;
+  string name     = 3;
+}
+
+// PubKey defines a PQC public key
+message PubKey {
+  bytes  key         = 1;
+  string key_type    = 2;
+  string pqc_address = 3;
+}

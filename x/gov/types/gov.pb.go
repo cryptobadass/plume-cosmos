@@ -8,9 +8,9 @@ import (
 	types1 "github.com/cosmos/cosmos-sdk/codec/types"
 	github_com_cosmos_cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
 	types "github.com/cosmos/cosmos-sdk/types"
+	proto "github.com/cosmos/gogoproto/proto"
+	github_com_cosmos_gogoproto_types "github.com/cosmos/gogoproto/types"
 	_ "github.com/gogo/protobuf/gogoproto"
-	proto "github.com/gogo/protobuf/proto"
-	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
 	_ "github.com/regen-network/cosmos-proto"
 	_ "google.golang.org/protobuf/types/known/durationpb"
 	_ "google.golang.org/protobuf/types/known/timestamppb"
@@ -907,7 +907,7 @@ func (m *Proposal) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x50
 	}
-	n1, err1 := github_com_gogo_protobuf_types.StdTimeMarshalTo(m.VotingEndTime, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdTime(m.VotingEndTime):])
+	n1, err1 := github_com_cosmos_gogoproto_types.StdTimeMarshalTo(m.VotingEndTime, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdTime(m.VotingEndTime):])
 	if err1 != nil {
 		return 0, err1
 	}
@@ -915,7 +915,7 @@ func (m *Proposal) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i = encodeVarintGov(dAtA, i, uint64(n1))
 	i--
 	dAtA[i] = 0x4a
-	n2, err2 := github_com_gogo_protobuf_types.StdTimeMarshalTo(m.VotingStartTime, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdTime(m.VotingStartTime):])
+	n2, err2 := github_com_cosmos_gogoproto_types.StdTimeMarshalTo(m.VotingStartTime, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdTime(m.VotingStartTime):])
 	if err2 != nil {
 		return 0, err2
 	}
@@ -937,7 +937,7 @@ func (m *Proposal) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			dAtA[i] = 0x3a
 		}
 	}
-	n3, err3 := github_com_gogo_protobuf_types.StdTimeMarshalTo(m.DepositEndTime, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdTime(m.DepositEndTime):])
+	n3, err3 := github_com_cosmos_gogoproto_types.StdTimeMarshalTo(m.DepositEndTime, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdTime(m.DepositEndTime):])
 	if err3 != nil {
 		return 0, err3
 	}
@@ -945,7 +945,7 @@ func (m *Proposal) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i = encodeVarintGov(dAtA, i, uint64(n3))
 	i--
 	dAtA[i] = 0x32
-	n4, err4 := github_com_gogo_protobuf_types.StdTimeMarshalTo(m.SubmitTime, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdTime(m.SubmitTime):])
+	n4, err4 := github_com_cosmos_gogoproto_types.StdTimeMarshalTo(m.SubmitTime, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdTime(m.SubmitTime):])
 	if err4 != nil {
 		return 0, err4
 	}
@@ -1139,7 +1139,7 @@ func (m *DepositParams) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			dAtA[i] = 0x1a
 		}
 	}
-	n7, err7 := github_com_gogo_protobuf_types.StdDurationMarshalTo(m.MaxDepositPeriod, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdDuration(m.MaxDepositPeriod):])
+	n7, err7 := github_com_cosmos_gogoproto_types.StdDurationMarshalTo(m.MaxDepositPeriod, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.MaxDepositPeriod):])
 	if err7 != nil {
 		return 0, err7
 	}
@@ -1184,7 +1184,7 @@ func (m *VotingParams) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	n8, err8 := github_com_gogo_protobuf_types.StdDurationMarshalTo(m.ExpeditedVotingPeriod, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdDuration(m.ExpeditedVotingPeriod):])
+	n8, err8 := github_com_cosmos_gogoproto_types.StdDurationMarshalTo(m.ExpeditedVotingPeriod, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.ExpeditedVotingPeriod):])
 	if err8 != nil {
 		return 0, err8
 	}
@@ -1192,7 +1192,7 @@ func (m *VotingParams) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i = encodeVarintGov(dAtA, i, uint64(n8))
 	i--
 	dAtA[i] = 0x12
-	n9, err9 := github_com_gogo_protobuf_types.StdDurationMarshalTo(m.VotingPeriod, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdDuration(m.VotingPeriod):])
+	n9, err9 := github_com_cosmos_gogoproto_types.StdDurationMarshalTo(m.VotingPeriod, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.VotingPeriod):])
 	if err9 != nil {
 		return 0, err9
 	}
@@ -1361,9 +1361,9 @@ func (m *Proposal) Size() (n int) {
 	}
 	l = m.FinalTallyResult.Size()
 	n += 1 + l + sovGov(uint64(l))
-	l = github_com_gogo_protobuf_types.SizeOfStdTime(m.SubmitTime)
+	l = github_com_cosmos_gogoproto_types.SizeOfStdTime(m.SubmitTime)
 	n += 1 + l + sovGov(uint64(l))
-	l = github_com_gogo_protobuf_types.SizeOfStdTime(m.DepositEndTime)
+	l = github_com_cosmos_gogoproto_types.SizeOfStdTime(m.DepositEndTime)
 	n += 1 + l + sovGov(uint64(l))
 	if len(m.TotalDeposit) > 0 {
 		for _, e := range m.TotalDeposit {
@@ -1371,9 +1371,9 @@ func (m *Proposal) Size() (n int) {
 			n += 1 + l + sovGov(uint64(l))
 		}
 	}
-	l = github_com_gogo_protobuf_types.SizeOfStdTime(m.VotingStartTime)
+	l = github_com_cosmos_gogoproto_types.SizeOfStdTime(m.VotingStartTime)
 	n += 1 + l + sovGov(uint64(l))
-	l = github_com_gogo_protobuf_types.SizeOfStdTime(m.VotingEndTime)
+	l = github_com_cosmos_gogoproto_types.SizeOfStdTime(m.VotingEndTime)
 	n += 1 + l + sovGov(uint64(l))
 	if m.IsExpedited {
 		n += 2
@@ -1435,7 +1435,7 @@ func (m *DepositParams) Size() (n int) {
 			n += 1 + l + sovGov(uint64(l))
 		}
 	}
-	l = github_com_gogo_protobuf_types.SizeOfStdDuration(m.MaxDepositPeriod)
+	l = github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.MaxDepositPeriod)
 	n += 1 + l + sovGov(uint64(l))
 	if len(m.MinExpeditedDeposit) > 0 {
 		for _, e := range m.MinExpeditedDeposit {
@@ -1452,9 +1452,9 @@ func (m *VotingParams) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = github_com_gogo_protobuf_types.SizeOfStdDuration(m.VotingPeriod)
+	l = github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.VotingPeriod)
 	n += 1 + l + sovGov(uint64(l))
-	l = github_com_gogo_protobuf_types.SizeOfStdDuration(m.ExpeditedVotingPeriod)
+	l = github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.ExpeditedVotingPeriod)
 	n += 1 + l + sovGov(uint64(l))
 	return n
 }
@@ -2021,7 +2021,7 @@ func (m *Proposal) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := github_com_gogo_protobuf_types.StdTimeUnmarshal(&m.SubmitTime, dAtA[iNdEx:postIndex]); err != nil {
+			if err := github_com_cosmos_gogoproto_types.StdTimeUnmarshal(&m.SubmitTime, dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -2054,7 +2054,7 @@ func (m *Proposal) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := github_com_gogo_protobuf_types.StdTimeUnmarshal(&m.DepositEndTime, dAtA[iNdEx:postIndex]); err != nil {
+			if err := github_com_cosmos_gogoproto_types.StdTimeUnmarshal(&m.DepositEndTime, dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -2121,7 +2121,7 @@ func (m *Proposal) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := github_com_gogo_protobuf_types.StdTimeUnmarshal(&m.VotingStartTime, dAtA[iNdEx:postIndex]); err != nil {
+			if err := github_com_cosmos_gogoproto_types.StdTimeUnmarshal(&m.VotingStartTime, dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -2154,7 +2154,7 @@ func (m *Proposal) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := github_com_gogo_protobuf_types.StdTimeUnmarshal(&m.VotingEndTime, dAtA[iNdEx:postIndex]); err != nil {
+			if err := github_com_cosmos_gogoproto_types.StdTimeUnmarshal(&m.VotingEndTime, dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -2631,7 +2631,7 @@ func (m *DepositParams) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := github_com_gogo_protobuf_types.StdDurationUnmarshal(&m.MaxDepositPeriod, dAtA[iNdEx:postIndex]); err != nil {
+			if err := github_com_cosmos_gogoproto_types.StdDurationUnmarshal(&m.MaxDepositPeriod, dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -2748,7 +2748,7 @@ func (m *VotingParams) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := github_com_gogo_protobuf_types.StdDurationUnmarshal(&m.VotingPeriod, dAtA[iNdEx:postIndex]); err != nil {
+			if err := github_com_cosmos_gogoproto_types.StdDurationUnmarshal(&m.VotingPeriod, dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -2781,7 +2781,7 @@ func (m *VotingParams) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := github_com_gogo_protobuf_types.StdDurationUnmarshal(&m.ExpeditedVotingPeriod, dAtA[iNdEx:postIndex]); err != nil {
+			if err := github_com_cosmos_gogoproto_types.StdDurationUnmarshal(&m.ExpeditedVotingPeriod, dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

@@ -8,6 +8,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	kmultisig "github.com/cosmos/cosmos-sdk/crypto/keys/multisig"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/pqc"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256r1"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/sr25519"
@@ -419,6 +420,9 @@ func DefaultSigVerificationGasConsumer(
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidPubKey, "ED25519 public keys are unsupported")
 	case *sr25519.PubKey:
 		meter.ConsumeGas(params.GetSr25519VerifyCost(), "ante verify: sr25519")
+		return nil
+	case *pqc.PubKey:
+		meter.ConsumeGas(params.GetPQCVerifyCost(), "ante verify: pqc")
 		return nil
 	case *secp256k1.PubKey:
 		meter.ConsumeGas(params.GetSigVerifyCostSecp256k1(), "ante verify: secp256k1")
