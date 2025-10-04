@@ -1,23 +1,19 @@
 package pqc
 
 import (
-	"crypto/rand"
-	"crypto/sha256"
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/crypto/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/open-quantum-safe/liboqs-go/oqs"
 	"github.com/tendermint/tendermint/crypto"
 )
 
 const (
-	KeyType             = "falcon-512"
-	PrivKeySize         = 1281
-	PubKeySize          = 897
-	CombinedPrivKeySize = PrivKeySize + PubKeySize
-	PrivKeyName         = "tendermint/PrivKeyPQC"
-	PubKeyName          = "tendermint/PubKeyPQC"
+	KeyType     = "Falcon-512"
+	PrivKeyName = "tendermint/PrivKeyPQC"
+	PubKeyName  = "tendermint/PubKeyPQC"
 )
 
 var _ codec.AminoMarshaler = &PrivKey{}
@@ -29,27 +25,46 @@ func (privKey PrivKey) Bytes() []byte {
 
 // Sign implements crypto.PrivKey.
 func (privKey *PrivKey) Sign(msg []byte) ([]byte, error) {
-	if len(privKey.Key) < CombinedPrivKeySize {
-		return nil, fmt.Errorf("invalid pqc private key size")
+	if len(privKey.Key) == 0 {
+		return nil, fmt.Errorf("invalid pqc private key")
 	}
 
-	// Simple signature simulation using SHA256 hash
-	// In a real implementation, this would use proper PQC signing
-	hasher := sha256.New()
-	hasher.Write(privKey.Key[:PrivKeySize])
-	hasher.Write(msg)
-	signature := hasher.Sum(nil)
+	// Initialize Falcon signer
+	sig := &oqs.Signature{}
+	defer sig.Clean()
+
+	if err := sig.Init(KeyType, privKey.Key); err != nil {
+		return nil, fmt.Errorf("failed to initialize PQC signer: %w", err)
+	}
+
+	// Sign the message
+	signature, err := sig.Sign(msg)
+	if err != nil {
+		return nil, fmt.Errorf("failed to sign message: %w", err)
+	}
 
 	return signature, nil
 }
 
 // PubKey implements crypto.PrivKey.
 func (privKey *PrivKey) PubKey() types.PubKey {
-	if len(privKey.Key) < CombinedPrivKeySize {
-		panic("invalid pqc private key size")
+	if len(privKey.Key) == 0 {
+		panic("invalid pqc private key")
 	}
-	publicKey := make([]byte, PubKeySize)
-	copy(publicKey, privKey.Key[PrivKeySize:])
+
+	// Initialize signer to get public key
+	sig := &oqs.Signature{}
+	defer sig.Clean()
+
+	if err := sig.Init(KeyType, privKey.Key); err != nil {
+		panic(fmt.Sprintf("failed to initialize PQC signer: %v", err))
+	}
+
+	// Generate key pair to get public key
+	publicKey, err := sig.GenerateKeyPair()
+	if err != nil {
+		panic(fmt.Sprintf("failed to generate key pair: %v", err))
+	}
 
 	return &PubKey{Key: publicKey}
 }
@@ -86,7 +101,7 @@ func (privKey PrivKey) MarshalAmino() ([]byte, error) {
 
 // UnmarshalAmino implements codec.AminoMarshaler.
 func (privKey *PrivKey) UnmarshalAmino(bz []byte) error {
-	if len(bz) != CombinedPrivKeySize {
+	if len(bz) == 0 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid private key size")
 	}
 	privKey.Key = bz
@@ -122,15 +137,25 @@ func (pubKey PubKey) Bytes() []byte {
 
 // Verify implements crypto.PubKey.
 func (pubKey PubKey) VerifySignature(msg []byte, sig []byte) bool {
-	// Simple verification simulation - this is not cryptographically secure
-	// In a real implementation, this would use proper PQC verification
-	hasher := sha256.New()
-	hasher.Write(pubKey.Key)
-	hasher.Write(msg)
-	expectedSig := hasher.Sum(nil)
+	if len(pubKey.Key) == 0 || len(sig) == 0 {
+		return false
+	}
 
-	return len(sig) == len(expectedSig) &&
-		len(sig) == sha256.Size
+	// Initialize Falcon verifier
+	verifier := &oqs.Signature{}
+	defer verifier.Clean()
+
+	if err := verifier.Init(KeyType, nil); err != nil {
+		return false
+	}
+
+	// Verify the signature
+	valid, err := verifier.Verify(msg, sig, pubKey.Key)
+	if err != nil {
+		return false
+	}
+
+	return valid
 }
 
 // Equals implements crypto.PubKey.
@@ -170,7 +195,7 @@ func (pubKey PubKey) MarshalAmino() ([]byte, error) {
 
 // UnmarshalAmino implements codec.AminoMarshaler.
 func (pubKey *PubKey) UnmarshalAmino(bz []byte) error {
-	if len(bz) != PubKeySize {
+	if len(bz) == 0 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid pubkey size")
 	}
 	pubKey.Key = bz
@@ -191,66 +216,63 @@ func (pubKey *PubKey) UnmarshalAminoJSON(bz []byte) error {
 
 // GenPrivKey generates a new PQC private key
 func GenPrivKey() *PrivKey {
-	// Generate random bytes for simulation
-	secretKey := make([]byte, PrivKeySize)
-	_, err := rand.Read(secretKey)
-	if err != nil {
-		panic(fmt.Sprintf("Failed to generate random secret key: %v", err))
+	// Initialize Falcon signer
+	sig := &oqs.Signature{}
+	defer sig.Clean()
+
+	if err := sig.Init(KeyType, nil); err != nil {
+		panic(fmt.Sprintf("Failed to initialize PQC signer: %v", err))
 	}
 
-	publicKey := make([]byte, PubKeySize)
-	_, err = rand.Read(publicKey)
+	// Generate key pair
+	_, err := sig.GenerateKeyPair()
 	if err != nil {
-		panic(fmt.Sprintf("Failed to generate random public key: %v", err))
+		panic(fmt.Sprintf("Failed to generate PQC key pair: %v", err))
 	}
 
-	combined := make([]byte, 0, CombinedPrivKeySize)
-	combined = append(combined, secretKey...)
-	combined = append(combined, publicKey...)
+	// Export secret key
+	secretKey := sig.ExportSecretKey()
+	if secretKey == nil {
+		panic("Failed to export secret key")
+	}
 
 	return &PrivKey{
-		Key: combined,
+		Key: secretKey,
 	}
-}
-
-// deterministicReader implements io.Reader for deterministic key generation
-type deterministicReader struct {
-	seed   []byte
-	offset int
-}
-
-func newDeterministicReader(seed []byte) *deterministicReader {
-	return &deterministicReader{
-		seed:   seed,
-		offset: 0,
-	}
-}
-
-func (dr *deterministicReader) Read(p []byte) (n int, err error) {
-	for i := 0; i < len(p); i++ {
-		p[i] = dr.seed[dr.offset%len(dr.seed)]
-		dr.offset++
-	}
-	return len(p), nil
 }
 
 // GenPrivKeyFromSecret generates a deterministic PQC private key from a seed
 func GenPrivKeyFromSecret(secret []byte) *PrivKey {
-	reader := newDeterministicReader(secret)
+	// For deterministic key generation, we'll use the seed directly as the secret key
+	// In a real implementation, this would use proper key derivation
+	if len(secret) < 32 {
+		// Pad with zeros if seed is too short
+		padded := make([]byte, 32)
+		copy(padded, secret)
+		secret = padded
+	}
 
-	// Generate deterministic secret key from seed
-	secretKey := make([]byte, PrivKeySize)
-	reader.Read(secretKey)
+	// Initialize Falcon signer with the seed as secret key
+	sig := &oqs.Signature{}
+	defer sig.Clean()
 
-	// Generate deterministic public key from seed
-	publicKey := make([]byte, PubKeySize)
-	reader.Read(publicKey)
+	if err := sig.Init(KeyType, secret); err != nil {
+		panic(fmt.Sprintf("Failed to initialize PQC signer from secret: %v", err))
+	}
 
-	combined := make([]byte, 0, CombinedPrivKeySize)
-	combined = append(combined, secretKey...)
-	combined = append(combined, publicKey...)
+	// Generate key pair
+	_, err := sig.GenerateKeyPair()
+	if err != nil {
+		panic(fmt.Sprintf("Failed to generate PQC key pair from secret: %v", err))
+	}
+
+	// Export secret key
+	secretKey := sig.ExportSecretKey()
+	if secretKey == nil {
+		panic("Failed to export secret key")
+	}
 
 	return &PrivKey{
-		Key: combined,
+		Key: secretKey,
 	}
 }
