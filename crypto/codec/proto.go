@@ -7,6 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256r1"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/sr25519"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/pqc"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 )
 
@@ -18,5 +19,6 @@ func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 	registry.RegisterImplementations(pk, &secp256k1.PubKey{})
 	registry.RegisterImplementations(pk, &multisig.LegacyAminoPubKey{})
 	registry.RegisterImplementations(pk, &sr25519.PubKey{})
+	registry.RegisterImplementations(pk, &pqc.PubKey{})
 	secp256r1.RegisterInterfaces(registry)
 }

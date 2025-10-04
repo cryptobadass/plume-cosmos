@@ -90,8 +90,8 @@ initialize_node() {
 
 # Function to create key
 create_key() {
-    print_status "Creating key: $KEYNAME"
-    echo -e "\n\n" | ./build/simd keys add "$KEYNAME" --keyring-backend "$KEYRING_BACKEND" --home ~/.simapp
+    print_status "Creating key: $KEYNAME with PQC algorithm"
+    echo -e "\n\n" | ./build/simd keys add "$KEYNAME" --algo falcon-512 --keyring-backend "$KEYRING_BACKEND" --home ~/.simapp
     print_status "Key created successfully."
 }
 
@@ -113,14 +113,14 @@ create_additional_accounts() {
     print_status "Creating additional accounts (ta0, ta1)..."
     
     # Create ta0 account
-    print_status "Creating ta0 account..."
-    echo -e "\n\n" | ./build/simd keys add ta0 --keyring-backend "$KEYRING_BACKEND" --home ~/.simapp
+    print_status "Creating ta0 account with PQC algorithm..."
+    echo -e "\n\n" | ./build/simd keys add ta0 --algo falcon-512 --keyring-backend "$KEYRING_BACKEND" --home ~/.simapp
     TA0_ADDR=$(./build/simd keys show ta0 -a --keyring-backend "$KEYRING_BACKEND" --home ~/.simapp)
     print_status "ta0 account address: $TA0_ADDR"
     
     # Create ta1 account
-    print_status "Creating ta1 account..."
-    echo -e "\n\n" | ./build/simd keys add ta1 --keyring-backend "$KEYRING_BACKEND" --home ~/.simapp
+    print_status "Creating ta1 account with PQC algorithm..."
+    echo -e "\n\n" | ./build/simd keys add ta1 --algo falcon-512 --keyring-backend "$KEYRING_BACKEND" --home ~/.simapp
     TA1_ADDR=$(./build/simd keys show ta1 -a --keyring-backend "$KEYRING_BACKEND" --home ~/.simapp)
     print_status "ta1 account address: $TA1_ADDR"
     
@@ -141,6 +141,10 @@ generate_gentx() {
     
     NODE_ID=$(./build/simd tendermint show-node-id --home ~/.simapp)
     print_status "Node ID: $NODE_ID"
+    
+    # Get the validator's public key (ed25519 for Tendermint consensus)
+    VALIDATOR_PUBKEY=$(./build/simd tendermint show-validator --home ~/.simapp)
+    print_status "Validator pubkey: $VALIDATOR_PUBKEY"
     
     ./build/simd gentx "$KEYNAME" "$GENTX_AMOUNT" --node-id "$NODE_ID" --chain-id "$CHAIN_ID" --keyring-backend "$KEYRING_BACKEND" --home ~/.simapp
     print_status "Genesis transaction generated successfully."

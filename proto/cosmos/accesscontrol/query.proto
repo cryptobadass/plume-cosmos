@@ -1,14 +1,14 @@
 syntax = "proto3";
-package cosmos.accesscontrol_x.v1beta1;
+package cosmos.accesscontrol;
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 
 import "cosmos/accesscontrol/accesscontrol.proto";
-import "cosmos/accesscontrol_x/genesis.proto";
+import "cosmos/accesscontrol/genesis.proto";
 
-option go_package = "github.com/cosmos/cosmos-sdk/x/accesscontrol/types";
+option go_package = "github.com/cosmos/cosmos-sdk/types/accesscontrol";
 
 service Query {
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
@@ -46,7 +46,7 @@ message QueryParamsRequest {}
 
 message QueryParamsResponse {
   // params defines the parameters of the module.
-  cosmos.accesscontrol_x.v1beta1.Params params = 1 [ (gogoproto.nullable) = false ];
+    cosmos.accesscontrol.Params params = 1 [ (gogoproto.nullable) = false ];
 }
 
 message ResourceDependencyMappingFromMessageKeyRequest {
@@ -54,7 +54,7 @@ message ResourceDependencyMappingFromMessageKeyRequest {
 }
 
 message ResourceDependencyMappingFromMessageKeyResponse {
-    cosmos.accesscontrol.v1beta1.MessageDependencyMapping message_dependency_mapping = 1 [
+    cosmos.accesscontrol.MessageDependencyMapping message_dependency_mapping = 1 [
         (gogoproto.nullable) = false,
         (gogoproto.moretags) = "yaml:\"message_dependency_mapping\""
     ];
@@ -65,7 +65,7 @@ message WasmDependencyMappingRequest {
 }
 
 message WasmDependencyMappingResponse {
-    cosmos.accesscontrol.v1beta1.WasmDependencyMapping wasm_dependency_mapping = 1 [
+    cosmos.accesscontrol.WasmDependencyMapping wasm_dependency_mapping = 1 [
         (gogoproto.nullable) = false,
         (gogoproto.moretags) = "yaml:\"wasm_dependency_mapping\""
     ];
@@ -75,7 +75,7 @@ message WasmDependencyMappingResponse {
 message ListResourceDependencyMappingRequest {}
 
 message ListResourceDependencyMappingResponse {
-    repeated cosmos.accesscontrol.v1beta1.MessageDependencyMapping message_dependency_mapping_list = 1 [
+    repeated cosmos.accesscontrol.MessageDependencyMapping message_dependency_mapping_list = 1 [
         (gogoproto.nullable) = false,
         (gogoproto.moretags) = "yaml:\"message_dependency_mapping_list\""
     ];
@@ -84,7 +84,7 @@ message ListResourceDependencyMappingResponse {
 message ListWasmDependencyMappingRequest {}
 
 message ListWasmDependencyMappingResponse {
-    repeated cosmos.accesscontrol.v1beta1.WasmDependencyMapping wasm_dependency_mapping_list = 1 [
+    repeated cosmos.accesscontrol.WasmDependencyMapping wasm_dependency_mapping_list = 1 [
         (gogoproto.nullable) = false,
         (gogoproto.moretags) = "yaml:\"wasm_dependency_mapping_list\""
     ];
