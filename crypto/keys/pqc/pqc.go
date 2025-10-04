@@ -11,9 +11,11 @@ import (
 )
 
 const (
-	KeyType     = "Falcon-512"
-	PrivKeyName = "tendermint/PrivKeyPQC"
-	PubKeyName  = "tendermint/PubKeyPQC"
+	KeyType      = "Falcon-512"
+	PrivKeyName  = "tendermint/PrivKeyPQC"
+	PubKeyName   = "tendermint/PubKeyPQC"
+	SecretKeyLen = 1281 // Falcon-512 secret key length
+	PublicKeyLen = 897  // Falcon-512 public key length
 )
 
 var _ codec.AminoMarshaler = &PrivKey{}
@@ -25,15 +27,18 @@ func (privKey PrivKey) Bytes() []byte {
 
 // Sign implements crypto.PrivKey.
 func (privKey *PrivKey) Sign(msg []byte) ([]byte, error) {
-	if len(privKey.Key) == 0 {
-		return nil, fmt.Errorf("invalid pqc private key")
+	if len(privKey.Key) != SecretKeyLen+PublicKeyLen {
+		return nil, fmt.Errorf("invalid pqc private key size: expected %d bytes, got %d", SecretKeyLen+PublicKeyLen, len(privKey.Key))
 	}
 
-	// Initialize Falcon signer
+	// Extract secret key (first SecretKeyLen bytes)
+	secretKey := privKey.Key[:SecretKeyLen]
+
+	// Initialize Falcon signer with the secret key
 	sig := &oqs.Signature{}
 	defer sig.Clean()
 
-	if err := sig.Init(KeyType, privKey.Key); err != nil {
+	if err := sig.Init(KeyType, secretKey); err != nil {
 		return nil, fmt.Errorf("failed to initialize PQC signer: %w", err)
 	}
 
@@ -48,23 +53,12 @@ func (privKey *PrivKey) Sign(msg []byte) ([]byte, error) {
 
 // PubKey implements crypto.PrivKey.
 func (privKey *PrivKey) PubKey() types.PubKey {
-	if len(privKey.Key) == 0 {
-		panic("invalid pqc private key")
+	if len(privKey.Key) != SecretKeyLen+PublicKeyLen {
+		panic(fmt.Sprintf("invalid pqc private key size: expected %d bytes, got %d", SecretKeyLen+PublicKeyLen, len(privKey.Key)))
 	}
 
-	// Initialize signer to get public key
-	sig := &oqs.Signature{}
-	defer sig.Clean()
-
-	if err := sig.Init(KeyType, privKey.Key); err != nil {
-		panic(fmt.Sprintf("failed to initialize PQC signer: %v", err))
-	}
-
-	// Generate key pair to get public key
-	publicKey, err := sig.GenerateKeyPair()
-	if err != nil {
-		panic(fmt.Sprintf("failed to generate key pair: %v", err))
-	}
+	// Extract public key (last PublicKeyLen bytes)
+	publicKey := privKey.Key[SecretKeyLen:]
 
 	return &PubKey{Key: publicKey}
 }
@@ -137,7 +131,7 @@ func (pubKey PubKey) Bytes() []byte {
 
 // Verify implements crypto.PubKey.
 func (pubKey PubKey) VerifySignature(msg []byte, sig []byte) bool {
-	if len(pubKey.Key) == 0 || len(sig) == 0 {
+	if len(pubKey.Key) != PublicKeyLen || len(sig) == 0 {
 		return false
 	}
 
@@ -225,7 +219,7 @@ func GenPrivKey() *PrivKey {
 	}
 
 	// Generate key pair
-	_, err := sig.GenerateKeyPair()
+	publicKey, err := sig.GenerateKeyPair()
 	if err != nil {
 		panic(fmt.Sprintf("Failed to generate PQC key pair: %v", err))
 	}
@@ -236,8 +230,13 @@ func GenPrivKey() *PrivKey {
 		panic("Failed to export secret key")
 	}
 
+	// Store both secret key and public key (secret key first, then public key)
+	combined := make([]byte, 0, len(secretKey)+len(publicKey))
+	combined = append(combined, secretKey...)
+	combined = append(combined, publicKey...)
+
 	return &PrivKey{
-		Key: secretKey,
+		Key: combined,
 	}
 }
 
@@ -261,7 +260,7 @@ func GenPrivKeyFromSecret(secret []byte) *PrivKey {
 	}
 
 	// Generate key pair
-	_, err := sig.GenerateKeyPair()
+	publicKey, err := sig.GenerateKeyPair()
 	if err != nil {
 		panic(fmt.Sprintf("Failed to generate PQC key pair from secret: %v", err))
 	}
@@ -272,7 +271,12 @@ func GenPrivKeyFromSecret(secret []byte) *PrivKey {
 		panic("Failed to export secret key")
 	}
 
+	// Store both secret key and public key (secret key first, then public key)
+	combined := make([]byte, 0, len(secretKey)+len(publicKey))
+	combined = append(combined, secretKey...)
+	combined = append(combined, publicKey...)
+
 	return &PrivKey{
-		Key: secretKey,
+		Key: combined,
 	}
 }

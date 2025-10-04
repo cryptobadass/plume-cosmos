@@ -139,6 +139,14 @@ create_additional_accounts() {
 generate_gentx() {
     print_status "Generating genesis transaction..."
     
+    # Create a separate validator key using secp256k1 for gentx signing
+    print_status "Creating validator key with secp256k1..."
+    echo -e "\n\n" | ./build/simd keys add validator --algo secp256k1 --keyring-backend "$KEYRING_BACKEND" --home ~/.simapp
+    
+    # Add validator to genesis
+    VALIDATOR_ADDR=$(./build/simd keys show validator -a --keyring-backend "$KEYRING_BACKEND" --home ~/.simapp)
+    ./build/simd add-genesis-account "$VALIDATOR_ADDR" 1000000000000000000000uplume --keyring-backend "$KEYRING_BACKEND" --home ~/.simapp
+    
     NODE_ID=$(./build/simd tendermint show-node-id --home ~/.simapp)
     print_status "Node ID: $NODE_ID"
     
@@ -146,7 +154,7 @@ generate_gentx() {
     VALIDATOR_PUBKEY=$(./build/simd tendermint show-validator --home ~/.simapp)
     print_status "Validator pubkey: $VALIDATOR_PUBKEY"
     
-    ./build/simd gentx "$KEYNAME" "$GENTX_AMOUNT" --node-id "$NODE_ID" --chain-id "$CHAIN_ID" --keyring-backend "$KEYRING_BACKEND" --home ~/.simapp
+    ./build/simd gentx validator "$GENTX_AMOUNT" --node-id "$NODE_ID" --chain-id "$CHAIN_ID" --keyring-backend "$KEYRING_BACKEND" --home ~/.simapp --pubkey "$VALIDATOR_PUBKEY"
     print_status "Genesis transaction generated successfully."
 }
 
@@ -194,8 +202,10 @@ configure_config_toml() {
     CONFIG_FILE="$HOME/.simapp/config/config.toml"
     CLIENT_FILE="$HOME/.simapp/config/client.toml"
     
-    # Set chain-id in client.toml
-    sed -i.bak 's/^chain-id = ""/chain-id = "test-chain"/' "$CLIENT_FILE"
+    # Set chain-id in client.toml (only if not already set)
+    if ! grep -q '^chain-id = "test-chain"' "$CLIENT_FILE"; then
+        sed -i.bak 's/^chain-id = ""/chain-id = "test-chain"/' "$CLIENT_FILE"
+    fi
     
     # Set mode to validator
     sed -i.bak 's/mode = "full"/mode = "validator"/' "$CONFIG_FILE"

@@ -255,6 +255,11 @@ func (svd SigVerificationDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simul
 		return ctx, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "invalid number of signer;  expected: %d, got %d", len(signerAddrs), len(sigs))
 	}
 
+	// Check PQC account transaction restrictions
+	if err := checkPQCTransactionRestrictions(ctx, svd.ak, sigTx); err != nil {
+		return ctx, err
+	}
+
 	for i, sig := range sigs {
 		acc, err := GetSignerAcc(ctx, svd.ak, signerAddrs[i])
 		if err != nil {
@@ -537,4 +542,50 @@ func signatureDataToBz(data signing.SignatureData) ([][]byte, error) {
 	default:
 		return nil, sdkerrors.ErrInvalidType.Wrapf("unexpected signature data type %T", data)
 	}
+}
+
+// checkPQCTransactionRestrictions checks if PQC accounts can only transact with other PQC accounts
+func checkPQCTransactionRestrictions(ctx sdk.Context, ak AccountKeeper, sigTx authsigning.SigVerifiableTx) error {
+	signerAddrs := sigTx.GetSigners()
+
+	// Get all accounts involved in the transaction
+	var accounts []types.AccountI
+	for _, addr := range signerAddrs {
+		acc, err := GetSignerAcc(ctx, ak, addr)
+		if err != nil {
+			return err
+		}
+		accounts = append(accounts, acc)
+	}
+
+	// Check if any account is PQC
+	hasPQCAccount := false
+	for _, acc := range accounts {
+		pubKey := acc.GetPubKey()
+		if pubKey != nil {
+			if _, ok := pubKey.(*pqc.PubKey); ok {
+				hasPQCAccount = true
+				break
+			}
+		}
+	}
+
+	// If no PQC accounts are involved, no restrictions apply
+	if !hasPQCAccount {
+		return nil
+	}
+
+	// If PQC accounts are involved, all accounts must be PQC
+	for _, acc := range accounts {
+		pubKey := acc.GetPubKey()
+		if pubKey != nil {
+			if _, ok := pubKey.(*pqc.PubKey); !ok {
+				return sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+					"PQC accounts can only transact with other PQC accounts. Account %s uses %T key type",
+					acc.GetAddress().String(), pubKey)
+			}
+		}
+	}
+
+	return nil
 }
