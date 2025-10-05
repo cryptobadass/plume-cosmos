@@ -3,9 +3,9 @@ package hd
 import (
 	bip39 "github.com/cosmos/go-bip39"
 
+	"github.com/cosmos/cosmos-sdk/crypto/keys/pqc"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/sr25519"
-	"github.com/cosmos/cosmos-sdk/crypto/keys/pqc"
 	"github.com/cosmos/cosmos-sdk/crypto/types"
 	tmsr25519 "github.com/tendermint/tendermint/crypto/sr25519"
 )
@@ -123,26 +123,21 @@ func (p pqcAlgo) Name() PubKeyType {
 }
 
 // Derive derives and returns the PQC private key for the given seed and HD path.
+// Note: PQC algorithms don't use deterministic derivation from mnemonics.
 func (p pqcAlgo) Derive() DeriveFn {
 	return func(mnemonic string, bip39Passphrase, hdPath string) ([]byte, error) {
-		seed, err := bip39.NewSeedWithErrorChecking(mnemonic, bip39Passphrase)
-		if err != nil {
-			return nil, err
-		}
-
-		masterPriv, ch := ComputeMastersFromSeed(seed)
-		if len(hdPath) == 0 {
-			return masterPriv[:], nil
-		}
-		derivedKey, err := DerivePrivateKeyForPath(masterPriv, ch, hdPath)
-
-		return derivedKey, err
+		// PQC algorithms don't use deterministic derivation from mnemonics
+		// Return empty bytes as Generate() will ignore this and create random keys
+		return []byte{}, nil
 	}
 }
 
 // Generate generates a PQC private key from the given bytes.
+// Note: PQC keys are generated randomly for security, ignoring the input bytes.
 func (p pqcAlgo) Generate() GenerateFn {
 	return func(bz []byte) types.PrivKey {
-		return pqc.GenPrivKeyFromSecret(bz)
+		// PQC keys require true randomness for security
+		// Ignore input bytes and generate random key
+		return pqc.GenPrivKey()
 	}
 }

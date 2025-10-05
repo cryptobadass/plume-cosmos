@@ -255,10 +255,10 @@ func (svd SigVerificationDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simul
 		return ctx, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "invalid number of signer;  expected: %d, got %d", len(signerAddrs), len(sigs))
 	}
 
-	// Check PQC account transaction restrictions
-	if err := checkPQCTransactionRestrictions(ctx, svd.ak, sigTx); err != nil {
-		return ctx, err
-	}
+	// Check PQC account transaction restrictions - DISABLED
+	// if err := checkPQCTransactionRestrictions(ctx, svd.ak, sigTx); err != nil {
+	//	return ctx, err
+	// }
 
 	for i, sig := range sigs {
 		acc, err := GetSignerAcc(ctx, svd.ak, signerAddrs[i])

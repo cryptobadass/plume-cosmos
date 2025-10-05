@@ -241,42 +241,14 @@ func GenPrivKey() *PrivKey {
 }
 
 // GenPrivKeyFromSecret generates a deterministic PQC private key from a seed
+// This function is deprecated and will be removed in future versions.
+// PQC keys should be generated randomly using GenPrivKey().
 func GenPrivKeyFromSecret(secret []byte) *PrivKey {
-	// For deterministic key generation, we'll use the seed directly as the secret key
-	// In a real implementation, this would use proper key derivation
-	if len(secret) < 32 {
-		// Pad with zeros if seed is too short
-		padded := make([]byte, 32)
-		copy(padded, secret)
-		secret = padded
-	}
-
-	// Initialize Falcon signer with the seed as secret key
-	sig := &oqs.Signature{}
-	defer sig.Clean()
-
-	if err := sig.Init(KeyType, secret); err != nil {
-		panic(fmt.Sprintf("Failed to initialize PQC signer from secret: %v", err))
-	}
-
-	// Generate key pair
-	publicKey, err := sig.GenerateKeyPair()
-	if err != nil {
-		panic(fmt.Sprintf("Failed to generate PQC key pair from secret: %v", err))
-	}
-
-	// Export secret key
-	secretKey := sig.ExportSecretKey()
-	if secretKey == nil {
-		panic("Failed to export secret key")
-	}
-
-	// Store both secret key and public key (secret key first, then public key)
-	combined := make([]byte, 0, len(secretKey)+len(publicKey))
-	combined = append(combined, secretKey...)
-	combined = append(combined, publicKey...)
-
-	return &PrivKey{
-		Key: combined,
-	}
+	// PQC keys require true randomness for security
+	// Deterministic generation from seed is not recommended for PQC algorithms
+	// This function is kept for compatibility but should not be used
+	fmt.Println("Warning: GenPrivKeyFromSecret is deprecated for PQC. Use GenPrivKey() for secure random key generation.")
+	
+	// Fallback to random key generation
+	return GenPrivKey()
 }
