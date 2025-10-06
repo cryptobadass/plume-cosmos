@@ -6,9 +6,9 @@ package types
 import (
 	fmt "fmt"
 	github_com_cosmos_cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
+	proto "github.com/cosmos/gogoproto/proto"
+	github_com_cosmos_gogoproto_types "github.com/cosmos/gogoproto/types"
 	_ "github.com/gogo/protobuf/gogoproto"
-	proto "github.com/gogo/protobuf/proto"
-	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
 	_ "google.golang.org/protobuf/types/known/durationpb"
 	_ "google.golang.org/protobuf/types/known/timestamppb"
 	io "io"
@@ -662,7 +662,7 @@ func (m *ValidatorSigningInfoLegacyMissedHeights) MarshalToSizedBuffer(dAtA []by
 		i--
 		dAtA[i] = 0x20
 	}
-	n1, err1 := github_com_gogo_protobuf_types.StdTimeMarshalTo(m.JailedUntil, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdTime(m.JailedUntil):])
+	n1, err1 := github_com_cosmos_gogoproto_types.StdTimeMarshalTo(m.JailedUntil, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdTime(m.JailedUntil):])
 	if err1 != nil {
 		return 0, err1
 	}
@@ -720,7 +720,7 @@ func (m *ValidatorSigningInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x28
 	}
-	n2, err2 := github_com_gogo_protobuf_types.StdTimeMarshalTo(m.JailedUntil, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdTime(m.JailedUntil):])
+	n2, err2 := github_com_cosmos_gogoproto_types.StdTimeMarshalTo(m.JailedUntil, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdTime(m.JailedUntil):])
 	if err2 != nil {
 		return 0, err2
 	}
@@ -890,7 +890,7 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	}
 	i--
 	dAtA[i] = 0x22
-	n7, err7 := github_com_gogo_protobuf_types.StdDurationMarshalTo(m.DowntimeJailDuration, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdDuration(m.DowntimeJailDuration):])
+	n7, err7 := github_com_cosmos_gogoproto_types.StdDurationMarshalTo(m.DowntimeJailDuration, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.DowntimeJailDuration):])
 	if err7 != nil {
 		return 0, err7
 	}
@@ -940,7 +940,7 @@ func (m *ValidatorSigningInfoLegacyMissedHeights) Size() (n int) {
 	if m.StartHeight != 0 {
 		n += 1 + sovSlashing(uint64(m.StartHeight))
 	}
-	l = github_com_gogo_protobuf_types.SizeOfStdTime(m.JailedUntil)
+	l = github_com_cosmos_gogoproto_types.SizeOfStdTime(m.JailedUntil)
 	n += 1 + l + sovSlashing(uint64(l))
 	if m.Tombstoned {
 		n += 2
@@ -967,7 +967,7 @@ func (m *ValidatorSigningInfo) Size() (n int) {
 	if m.IndexOffset != 0 {
 		n += 1 + sovSlashing(uint64(m.IndexOffset))
 	}
-	l = github_com_gogo_protobuf_types.SizeOfStdTime(m.JailedUntil)
+	l = github_com_cosmos_gogoproto_types.SizeOfStdTime(m.JailedUntil)
 	n += 1 + l + sovSlashing(uint64(l))
 	if m.Tombstoned {
 		n += 2
@@ -1032,7 +1032,7 @@ func (m *Params) Size() (n int) {
 	}
 	l = m.MinSignedPerWindow.Size()
 	n += 1 + l + sovSlashing(uint64(l))
-	l = github_com_gogo_protobuf_types.SizeOfStdDuration(m.DowntimeJailDuration)
+	l = github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.DowntimeJailDuration)
 	n += 1 + l + sovSlashing(uint64(l))
 	l = m.SlashFractionDoubleSign.Size()
 	n += 1 + l + sovSlashing(uint64(l))
@@ -1156,7 +1156,7 @@ func (m *ValidatorSigningInfoLegacyMissedHeights) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := github_com_gogo_protobuf_types.StdTimeUnmarshal(&m.JailedUntil, dAtA[iNdEx:postIndex]); err != nil {
+			if err := github_com_cosmos_gogoproto_types.StdTimeUnmarshal(&m.JailedUntil, dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -1348,7 +1348,7 @@ func (m *ValidatorSigningInfo) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := github_com_gogo_protobuf_types.StdTimeUnmarshal(&m.JailedUntil, dAtA[iNdEx:postIndex]); err != nil {
+			if err := github_com_cosmos_gogoproto_types.StdTimeUnmarshal(&m.JailedUntil, dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -1857,7 +1857,7 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := github_com_gogo_protobuf_types.StdDurationUnmarshal(&m.DowntimeJailDuration, dAtA[iNdEx:postIndex]); err != nil {
+			if err := github_com_cosmos_gogoproto_types.StdDurationUnmarshal(&m.DowntimeJailDuration, dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

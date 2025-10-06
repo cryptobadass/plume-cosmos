@@ -124,6 +124,11 @@ func (registry *interfaceRegistry) RegisterInterface(protoName string, iface int
 func (registry *interfaceRegistry) RegisterImplementations(iface interface{}, impls ...proto.Message) {
 	for _, impl := range impls {
 		typeURL := "/" + proto.MessageName(impl)
+		// If proto.MessageName returns empty string, use reflection to get type name
+		if typeURL == "/" {
+			implType := reflect.TypeOf(impl).Elem()
+			typeURL = "/" + implType.PkgPath() + "." + implType.Name()
+		}
 		registry.registerImpl(iface, typeURL, impl)
 	}
 }

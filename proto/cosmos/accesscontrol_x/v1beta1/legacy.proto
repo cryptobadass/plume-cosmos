@@ -1,9 +1,9 @@
 syntax = "proto3";
-package cosmos.accesscontrol;
+package cosmos.accesscontrol_x.v1beta1;
 
 import "gogoproto/gogo.proto";
-import "cosmos/accesscontrol/constants.proto";
-import "cosmos/accesscontrol/accesscontrol.proto";
+import "cosmos/accesscontrol_x/v1beta1/constants.proto";
+import "cosmos/accesscontrol_x/v1beta1/accesscontrol.proto";
 
 option go_package = "github.com/cosmos/cosmos-sdk/types/accesscontrol";
 

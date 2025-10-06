@@ -1,5 +1,5 @@
 syntax = "proto3";
-package cosmos.accesscontrol;
+package cosmos.accesscontrol_x.v1beta1;
 
 option go_package = "github.com/cosmos/cosmos-sdk/types/accesscontrol";
 
