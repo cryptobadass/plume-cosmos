@@ -72,6 +72,19 @@ func (i LocalInfo) GetAddress() types.AccAddress {
 	return i.PubKey.Address().Bytes()
 }
 
+// GetAddressString returns the address string with algorithm-specific prefix
+func (i LocalInfo) GetAddressString() string {
+	addr := i.PubKey.Address().Bytes()
+	
+	// Check if this is a PQC key
+	if i.Algo == hd.PQCType {
+		return types.AccAddress(addr).StringWithAlgorithm("pqc")
+	}
+	
+	// Use default prefix for other algorithms
+	return types.AccAddress(addr).String()
+}
+
 // GetType implements Info interface
 func (i LocalInfo) GetAlgo() hd.PubKeyType {
 	return i.Algo

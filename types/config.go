@@ -16,6 +16,8 @@ const DefaultKeyringServiceName = "cosmos"
 type Config struct {
 	fullFundraiserPath  string
 	bech32AddressPrefix map[string]string
+	// Algorithm-specific address prefixes (e.g., "pqc" -> "plume2")
+	algorithmPrefixMap  map[string]string
 	txEncoder           TxEncoder
 	addressVerifier     func([]byte) error
 	mtx                 sync.RWMutex
@@ -46,6 +48,7 @@ func NewConfig() *Config {
 			"validator_pub":  Bech32PrefixValPub,
 			"consensus_pub":  Bech32PrefixConsPub,
 		},
+		algorithmPrefixMap: map[string]string{},
 		fullFundraiserPath: FullFundraiserPath,
 
 		purpose:   Purpose,
@@ -104,6 +107,14 @@ func (config *Config) SetBech32PrefixForConsensusNode(addressPrefix, pubKeyPrefi
 	config.assertNotSealed()
 	config.bech32AddressPrefix["consensus_addr"] = addressPrefix
 	config.bech32AddressPrefix["consensus_pub"] = pubKeyPrefix
+}
+
+// SetBech32PrefixForAlgorithm builds the Config with Bech32 addressPrefix and publKeyPrefix for specific algorithms
+// and returns the config instance
+func (config *Config) SetBech32PrefixForAlgorithm(algorithm string, addressPrefix, pubKeyPrefix string) {
+	config.assertNotSealed()
+	config.algorithmPrefixMap[algorithm+"_addr"] = addressPrefix
+	config.algorithmPrefixMap[algorithm+"_pub"] = pubKeyPrefix
 }
 
 // SetTxEncoder builds the Config with TxEncoder used to marshal StdTx to bytes
@@ -184,6 +195,23 @@ func (config *Config) GetBech32ValidatorPubPrefix() string {
 // GetBech32ConsensusPubPrefix returns the Bech32 prefix for consensus node public key
 func (config *Config) GetBech32ConsensusPubPrefix() string {
 	return config.bech32AddressPrefix["consensus_pub"]
+}
+
+// GetBech32PrefixForAlgorithm returns the Bech32 prefixes for a specific algorithm
+func (config *Config) GetBech32PrefixForAlgorithm(algorithm string) (addrPrefix, pubPrefix string) {
+	addrPrefix = config.algorithmPrefixMap[algorithm+"_addr"]
+	pubPrefix = config.algorithmPrefixMap[algorithm+"_pub"]
+	if addrPrefix == "" {
+		// Fallback to default prefixes
+		addrPrefix = config.bech32AddressPrefix["account_addr"]
+		pubPrefix = config.bech32AddressPrefix["account_pub"]
+	}
+	return addrPrefix, pubPrefix
+}
+
+// GetAlgorithmPrefixes returns all configured algorithm prefixes
+func (config *Config) GetAlgorithmPrefixes() map[string]string {
+	return config.algorithmPrefixMap
 }
 
 // GetTxEncoder return function to encode transactions

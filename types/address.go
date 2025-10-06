@@ -170,19 +170,37 @@ func AccAddressFromBech32(address string) (addr AccAddress, err error) {
 		return AccAddress{}, errors.New("empty address string is not allowed")
 	}
 
+	// Try default prefix first
 	bech32PrefixAccAddr := GetConfig().GetBech32AccountAddrPrefix()
-
 	bz, err := GetFromBech32(address, bech32PrefixAccAddr)
-	if err != nil {
-		return nil, err
+	if err == nil {
+		err = VerifyAddressFormat(bz)
+		if err != nil {
+			return nil, err
+		}
+		return AccAddress(bz), nil
 	}
 
-	err = VerifyAddressFormat(bz)
-	if err != nil {
-		return nil, err
+	// Try algorithm-specific prefixes
+	config := GetConfig()
+	for algorithm := range config.GetAlgorithmPrefixes() {
+		if strings.HasSuffix(algorithm, "_addr") {
+			algName := strings.TrimSuffix(algorithm, "_addr")
+			prefix, _ := config.GetBech32PrefixForAlgorithm(algName)
+			if prefix != bech32PrefixAccAddr { // Skip if same as default
+				bz, err := GetFromBech32(address, prefix)
+				if err == nil {
+					err = VerifyAddressFormat(bz)
+					if err != nil {
+						continue
+					}
+					return AccAddress(bz), nil
+				}
+			}
+		}
 	}
 
-	return AccAddress(bz), nil
+	return nil, fmt.Errorf("invalid bech32 address: %s", address)
 }
 
 // Returns boolean for whether two AccAddresses are Equal
@@ -284,6 +302,26 @@ func (aa AccAddress) String() string {
 		return addr
 	}
 	return cacheBech32Addr(GetConfig().GetBech32AccountAddrPrefix(), aa, accAddrCache, key)
+}
+
+// StringWithAlgorithm returns the address string using algorithm-specific prefix
+func (aa AccAddress) StringWithAlgorithm(algorithm string) string {
+	if aa.Empty() {
+		return ""
+	}
+
+	// Create algorithm-specific cache key
+	var key = algorithm + "_" + conv.UnsafeBytesToStr(aa)
+	accAddrMu.Lock()
+	defer accAddrMu.Unlock()
+	addr, ok := accAddrCache.Get(key)
+	if ok {
+		return addr
+	}
+	
+	// Get algorithm-specific prefix
+	prefix, _ := GetConfig().GetBech32PrefixForAlgorithm(algorithm)
+	return cacheBech32Addr(prefix, aa, accAddrCache, key)
 }
 
 // Format implements the fmt.Formatter interface.

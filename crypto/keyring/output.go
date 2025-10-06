@@ -64,7 +64,22 @@ func MkValKeyOutput(keyInfo Info) (KeyOutput, error) {
 func MkAccKeyOutput(keyInfo Info) (KeyOutput, error) {
 	pk := keyInfo.GetPubKey()
 	addr := sdk.AccAddress(pk.Address())
-	return NewKeyOutput(keyInfo.GetName(), keyInfo.GetType(), addr, pk)
+	
+	// Use algorithm-specific address string if available
+	addrStr := addr.String()
+	if localInfo, ok := keyInfo.(LocalInfo); ok {
+		addrStr = localInfo.GetAddressString()
+	}
+	
+	// Create KeyOutput with custom address string
+	ko, err := NewKeyOutput(keyInfo.GetName(), keyInfo.GetType(), addr, pk)
+	if err != nil {
+		return KeyOutput{}, err
+	}
+	
+	// Override address with algorithm-specific prefix
+	ko.Address = addrStr
+	return ko, nil
 }
 
 // MkAccKeysOutput returns a slice of KeyOutput objects, each with the "acc"
