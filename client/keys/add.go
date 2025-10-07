@@ -216,37 +216,48 @@ func runAddCmd(ctx client.Context, cmd *cobra.Command, args []string, inBuf *buf
 	// Get bip39 mnemonic
 	var mnemonic, bip39Passphrase string
 
-	recover, _ := cmd.Flags().GetBool(flagRecover)
-	if recover {
-		mnemonic, err = input.GetString("Enter your bip39 mnemonic", inBuf)
-		if err != nil {
-			return err
+	// Check if this is a PQC algorithm - PQC doesn't need mnemonics
+	isPQC := string(algo.Name()) == "falcon-512"
+	shouldRecover, _ := cmd.Flags().GetBool(flagRecover)
+
+	if isPQC {
+		// For PQC algorithms, we don't use mnemonics
+		// Generate random key directly
+		fmt.Println("PQC algorithm detected - using random key generation (no mnemonic needed)")
+		mnemonic = "" // Ensure empty mnemonic for PQC
+	} else {
+		// Traditional algorithms use mnemonics
+		if shouldRecover {
+			mnemonic, err = input.GetString("Enter your bip39 mnemonic", inBuf)
+			if err != nil {
+				return err
+			}
+
+			if !bip39.IsMnemonicValid(mnemonic) {
+				return errors.New("invalid mnemonic")
+			}
+		} else if interactive {
+			mnemonic, err = input.GetString("Enter your bip39 mnemonic, or hit enter to generate one.", inBuf)
+			if err != nil {
+				return err
+			}
+
+			if !bip39.IsMnemonicValid(mnemonic) && mnemonic != "" {
+				return errors.New("invalid mnemonic")
+			}
 		}
 
-		if !bip39.IsMnemonicValid(mnemonic) {
-			return errors.New("invalid mnemonic")
-		}
-	} else if interactive {
-		mnemonic, err = input.GetString("Enter your bip39 mnemonic, or hit enter to generate one.", inBuf)
-		if err != nil {
-			return err
-		}
+		if len(mnemonic) == 0 {
+			// read entropy seed straight from tmcrypto.Rand and convert to mnemonic
+			entropySeed, err := bip39.NewEntropy(mnemonicEntropySize)
+			if err != nil {
+				return err
+			}
 
-		if !bip39.IsMnemonicValid(mnemonic) && mnemonic != "" {
-			return errors.New("invalid mnemonic")
-		}
-	}
-
-	if len(mnemonic) == 0 {
-		// read entropy seed straight from tmcrypto.Rand and convert to mnemonic
-		entropySeed, err := bip39.NewEntropy(mnemonicEntropySize)
-		if err != nil {
-			return err
-		}
-
-		mnemonic, err = bip39.NewMnemonic(entropySeed)
-		if err != nil {
-			return err
+			mnemonic, err = bip39.NewMnemonic(entropySeed)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
@@ -278,7 +289,7 @@ func runAddCmd(ctx client.Context, cmd *cobra.Command, args []string, inBuf *buf
 	}
 
 	// Recover key from seed passphrase
-	if recover {
+	if shouldRecover {
 		// Hide mnemonic from output
 		showMnemonic = false
 		mnemonic = ""

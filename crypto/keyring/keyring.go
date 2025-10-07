@@ -2,15 +2,17 @@ package keyring
 
 import (
 	"bufio"
+	"encoding/base64"
 	"encoding/hex"
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sort"
 	"strings"
+
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 
 	"github.com/99designs/keyring"
 	bip39 "github.com/cosmos/go-bip39"
@@ -22,6 +24,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec/legacy"
 	"github.com/cosmos/cosmos-sdk/crypto"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/pqc"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/sr25519"
 	"github.com/cosmos/cosmos-sdk/crypto/ledger"
 	"github.com/cosmos/cosmos-sdk/crypto/types"
@@ -198,7 +201,7 @@ type keystore struct {
 func newKeystore(kr keyring.Keyring, backend string, opts ...Option) keystore {
 	// Default options for keybase
 	options := Options{
-		SupportedAlgos:       SigningAlgoList{hd.Sr25519, hd.Secp256k1},
+		SupportedAlgos:       SigningAlgoList{hd.Sr25519, hd.Secp256k1, hd.PQC},
 		SupportedAlgosLedger: SigningAlgoList{hd.Sr25519, hd.Secp256k1},
 	}
 
@@ -245,6 +248,13 @@ func (ks keystore) ExportPrivateKeyObject(uid string) ([]byte, error) {
 				return nil, err
 			}
 			priv = []byte(linfo.PrivKeyArmor)
+		} else if linfo.Algo == hd.PQCType {
+			// PQC keys: decode from base64 first
+			privBytes, err := base64.StdEncoding.DecodeString(linfo.PrivKeyArmor)
+			if err != nil {
+				return nil, fmt.Errorf("failed to decode PQC private key from base64: %w", err)
+			}
+			priv = privBytes
 		} else {
 			privKeys, err := legacy.PrivKeyFromBytes([]byte(linfo.PrivKeyArmor))
 			if err != nil {
@@ -319,6 +329,17 @@ func (ks keystore) Sign(uid string, msg []byte) ([]byte, types.PubKey, error) {
 		if i.Algo == hd.Sr25519Type {
 			typedPriv := &sr25519.PrivKey{}
 			if err := typedPriv.UnmarshalJSON([]byte(i.PrivKeyArmor)); err != nil {
+				return nil, nil, err
+			}
+			priv = typedPriv
+		} else if i.Algo == hd.PQCType {
+			// PQC keys: decode from base64 first
+			privBytes, err := base64.StdEncoding.DecodeString(i.PrivKeyArmor)
+			if err != nil {
+				return nil, nil, fmt.Errorf("failed to decode PQC private key from base64: %w", err)
+			}
+			typedPriv := &pqc.PrivKey{}
+			if err := typedPriv.UnmarshalAmino(privBytes); err != nil {
 				return nil, nil, err
 			}
 			priv = typedPriv
@@ -746,6 +767,15 @@ func (ks keystore) writeLocalKey(name string, priv types.PrivKey, algo hd.PubKey
 			return nil, err
 		}
 		info = newLocalInfo(name, pub, string(jsonBytes), algo)
+	} else if algo == hd.PQCType {
+		typedPriv := priv.(*pqc.PrivKey)
+		aminoBytes, err := typedPriv.MarshalAmino()
+		if err != nil {
+			return nil, err
+		}
+		// Use base64 encoding to safely store binary data as string
+		privArmor := base64.StdEncoding.EncodeToString(aminoBytes)
+		info = newLocalInfo(name, pub, privArmor, algo)
 	} else {
 		info = newLocalInfo(name, pub, string(legacy.Cdc.MustMarshal(priv)), algo)
 	}

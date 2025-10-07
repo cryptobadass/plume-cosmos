@@ -1,0 +1,18 @@
+syntax = "proto3";
+package cosmos.crypto.pqc;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/cosmos/cosmos-sdk/crypto/keys/pqc";
+
+// PubKey defines a PQC public key (Falcon-512)
+message PubKey {
+  option (gogoproto.goproto_stringer) = false;
+
+  bytes key = 1;
+}
+
+// PrivKey defines a PQC private key (Falcon-512)
+message PrivKey {
+  bytes key = 1;
+}

@@ -31,6 +31,7 @@ require (
 	github.com/jhump/protoreflect v1.12.1-0.20220417024638-438db461d753
 	github.com/magiconair/properties v1.8.6
 	github.com/mattn/go-isatty v0.0.19
+	github.com/open-quantum-safe/liboqs-go v0.0.0-20250119172907-28b5301df438
 	github.com/pkg/errors v0.9.1
 	github.com/plume-protocol/plume-db v0.0.27-0.20240123064153-d6dfa112e760
 	github.com/plume-protocol/plume-tm-db v0.0.5

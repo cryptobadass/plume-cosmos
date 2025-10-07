@@ -3,6 +3,7 @@ package hd
 import (
 	bip39 "github.com/cosmos/go-bip39"
 
+	"github.com/cosmos/cosmos-sdk/crypto/keys/pqc"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/sr25519"
 	"github.com/cosmos/cosmos-sdk/crypto/types"
@@ -22,6 +23,8 @@ const (
 	Ed25519Type = PubKeyType("ed25519")
 	// Sr25519Type represents the Sr25519Type signature system.
 	Sr25519Type = PubKeyType("sr25519")
+	// PQCType represents the PQC signature system (Falcon-512).
+	PQCType = PubKeyType("falcon-512")
 )
 
 var (
@@ -29,6 +32,9 @@ var (
 	Secp256k1 = secp256k1Algo{}
 
 	Sr25519 = sr25519Algo{}
+
+	// PQC uses the PQC signature system (Falcon-512).
+	PQC = pqcAlgo{}
 )
 
 type DeriveFn func(mnemonic string, bip39Passphrase, hdPath string) ([]byte, error)
@@ -106,5 +112,32 @@ func (s sr25519Algo) Generate() GenerateFn {
 		copy(bzArr, bz)
 
 		return &sr25519.PrivKey{PrivKey: tmsr25519.GenPrivKeyFromSecret(bzArr)}
+	}
+}
+
+type pqcAlgo struct {
+}
+
+func (p pqcAlgo) Name() PubKeyType {
+	return PQCType
+}
+
+// Derive derives and returns the PQC private key for the given seed and HD path.
+// Note: PQC algorithms don't use deterministic derivation from mnemonics.
+func (p pqcAlgo) Derive() DeriveFn {
+	return func(mnemonic string, bip39Passphrase, hdPath string) ([]byte, error) {
+		// PQC algorithms don't use deterministic derivation from mnemonics
+		// Return empty bytes as Generate() will ignore this and create random keys
+		return []byte{}, nil
+	}
+}
+
+// Generate generates a PQC private key from the given bytes.
+// Note: PQC keys are generated randomly for security, ignoring the input bytes.
+func (p pqcAlgo) Generate() GenerateFn {
+	return func(bz []byte) types.PrivKey {
+		// PQC keys require true randomness for security
+		// Ignore input bytes and generate random key
+		return pqc.GenPrivKey()
 	}
 }

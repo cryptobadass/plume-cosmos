@@ -8,6 +8,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	kmultisig "github.com/cosmos/cosmos-sdk/crypto/keys/multisig"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/pqc"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256r1"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/sr25519"
@@ -425,6 +426,11 @@ func DefaultSigVerificationGasConsumer(
 		return nil
 	case *secp256r1.PubKey:
 		meter.ConsumeGas(params.SigVerifyCostSecp256r1(), "ante verify: secp256r1")
+		return nil
+	case *pqc.PubKey:
+		// PQC (Post-Quantum Cryptography) keys - Falcon-512
+		// Use similar gas cost as secp256k1 for now
+		meter.ConsumeGas(params.GetSigVerifyCostSecp256k1(), "ante verify: pqc")
 		return nil
 	case multisig.PubKey:
 		multisignature, ok := sig.Data.(*signing.MultiSignatureData)
