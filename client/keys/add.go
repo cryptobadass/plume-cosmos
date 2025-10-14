@@ -299,17 +299,38 @@ func runAddCmd(ctx client.Context, cmd *cobra.Command, args []string, inBuf *buf
 }
 
 func printCreate(cmd *cobra.Command, info keyring.Info, showMnemonic bool, mnemonic string, outputFormat string) error {
+	// Check if this is a PQC key
+	isPQC := info.GetAlgo() == hd.PQCType
+	
 	switch outputFormat {
 	case OutputFormatText:
 		cmd.PrintErrln()
 		printKeyInfo(cmd.OutOrStdout(), info, keyring.MkAccKeyOutput, outputFormat)
 
-		// print mnemonic unless requested not to.
+		// print mnemonic or private key based on algorithm type
 		if showMnemonic {
-			fmt.Fprintln(cmd.ErrOrStderr(), "\n**Important** write this mnemonic phrase in a safe place.")
-			fmt.Fprintln(cmd.ErrOrStderr(), "It is the only way to recover your account if you ever forget your password.")
-			fmt.Fprintln(cmd.ErrOrStderr(), "")
-			fmt.Fprintln(cmd.ErrOrStderr(), mnemonic)
+			if isPQC {
+				// For PQC keys, export and print private key
+				fmt.Fprintln(cmd.ErrOrStderr(), "\n**Important** write this private key in a safe place.")
+				fmt.Fprintln(cmd.ErrOrStderr(), "It is the only way to recover your account if you ever forget your private key.")
+				fmt.Fprintln(cmd.ErrOrStderr(), "")
+				
+				// Get keyring from client context
+				clientCtx := client.GetClientContextFromCmd(cmd)
+				armor, err := clientCtx.Keyring.ExportPrivKeyArmor(info.GetName(), "")
+				if err != nil {
+					fmt.Fprintf(cmd.ErrOrStderr(), "Warning: Could not export private key: %v\n", err)
+					fmt.Fprintln(cmd.ErrOrStderr(), "Note: You can export it later using: plume keys export <keyname>")
+				} else {
+					fmt.Fprintln(cmd.ErrOrStderr(), armor)
+				}
+			} else {
+				// For traditional keys, print mnemonic
+				fmt.Fprintln(cmd.ErrOrStderr(), "\n**Important** write this mnemonic phrase in a safe place.")
+				fmt.Fprintln(cmd.ErrOrStderr(), "It is the only way to recover your account if you ever forget your password.")
+				fmt.Fprintln(cmd.ErrOrStderr(), "")
+				fmt.Fprintln(cmd.ErrOrStderr(), mnemonic)
+			}
 		}
 	case OutputFormatJSON:
 		out, err := keyring.MkAccKeyOutput(info)
@@ -318,7 +339,15 @@ func printCreate(cmd *cobra.Command, info keyring.Info, showMnemonic bool, mnemo
 		}
 
 		if showMnemonic {
-			out.Mnemonic = mnemonic
+			if isPQC {
+				// For PQC keys in JSON output, include private key armor
+				localInfo, ok := info.(keyring.LocalInfo)
+				if ok {
+					out.Mnemonic = localInfo.PrivKeyArmor // Reuse mnemonic field for private key
+				}
+			} else {
+				out.Mnemonic = mnemonic
+			}
 		}
 
 		jsonString, err := KeysCdc.MarshalJSON(out)

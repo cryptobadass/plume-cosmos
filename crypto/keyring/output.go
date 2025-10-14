@@ -2,6 +2,7 @@ package keyring
 
 import (
 	"encoding/hex"
+
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -63,23 +64,38 @@ func MkValKeyOutput(keyInfo Info) (KeyOutput, error) {
 // public keys will be added.
 func MkAccKeyOutput(keyInfo Info) (KeyOutput, error) {
 	pk := keyInfo.GetPubKey()
-	addr := sdk.AccAddress(pk.Address())
-	
-	// Use algorithm-specific address string if available
-	addrStr := addr.String()
-	if localInfo, ok := keyInfo.(LocalInfo); ok {
+
+	// Get algorithm-specific address string
+	var addrStr string
+	if localInfo, ok := keyInfo.(*LocalInfo); ok {
+		// Pointer type
 		addrStr = localInfo.GetAddressString()
+	} else if localInfo, ok := keyInfo.(LocalInfo); ok {
+		// Value type
+		addrStr = localInfo.GetAddressString()
+	} else {
+		// Fallback for other types
+		addr := sdk.AccAddress(pk.Address())
+		addrStr = addr.String()
 	}
-	
-	// Create KeyOutput with custom address string
-	ko, err := NewKeyOutput(keyInfo.GetName(), keyInfo.GetType(), addr, pk)
+
+	// Create PubKey Any message
+	apk, err := codectypes.NewAnyWithValue(pk)
 	if err != nil {
 		return KeyOutput{}, err
 	}
-	
-	// Override address with algorithm-specific prefix
-	ko.Address = addrStr
-	return ko, nil
+	bz, err := codec.ProtoMarshalJSON(apk, nil)
+	if err != nil {
+		return KeyOutput{}, err
+	}
+
+	// Create KeyOutput with algorithm-specific address
+	return KeyOutput{
+		Name:    keyInfo.GetName(),
+		Type:    keyInfo.GetType().String(),
+		Address: addrStr, // Use algorithm-specific address
+		PubKey:  string(bz),
+	}, nil
 }
 
 // MkAccKeysOutput returns a slice of KeyOutput objects, each with the "acc"
