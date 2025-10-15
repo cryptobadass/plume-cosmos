@@ -310,19 +310,21 @@ func printCreate(cmd *cobra.Command, info keyring.Info, showMnemonic bool, mnemo
 		// print mnemonic or private key based on algorithm type
 		if showMnemonic {
 			if isPQC {
-				// For PQC keys, export and print private key
+				// For PQC keys, export and print private key in unarmored hex format
 				fmt.Fprintln(cmd.ErrOrStderr(), "\n**Important** write this private key in a safe place.")
 				fmt.Fprintln(cmd.ErrOrStderr(), "It is the only way to recover your account if you ever forget your private key.")
 				fmt.Fprintln(cmd.ErrOrStderr(), "")
 				
 				// Get keyring from client context
 				clientCtx := client.GetClientContextFromCmd(cmd)
-				armor, err := clientCtx.Keyring.ExportPrivKeyArmor(info.GetName(), "")
+				// Export as unarmored hex (like --unsafe --unarmored-hex)
+				unsafeKeyring := keyring.NewUnsafe(clientCtx.Keyring)
+				hexPrivKey, err := unsafeKeyring.UnsafeExportPrivKeyHex(info.GetName())
 				if err != nil {
 					fmt.Fprintf(cmd.ErrOrStderr(), "Warning: Could not export private key: %v\n", err)
-					fmt.Fprintln(cmd.ErrOrStderr(), "Note: You can export it later using: plume keys export <keyname>")
+					fmt.Fprintln(cmd.ErrOrStderr(), "Note: You can export it later using: plume keys export <keyname> --unsafe --unarmored-hex")
 				} else {
-					fmt.Fprintln(cmd.ErrOrStderr(), armor)
+					fmt.Fprintln(cmd.ErrOrStderr(), hexPrivKey)
 				}
 			} else {
 				// For traditional keys, print mnemonic
