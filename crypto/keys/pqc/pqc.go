@@ -1,6 +1,7 @@
 package pqc
 
 import (
+	"crypto/sha256"
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -8,6 +9,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/open-quantum-safe/liboqs-go/oqs"
 	"github.com/tendermint/tendermint/crypto"
+	"golang.org/x/crypto/ripemd160" // nolint: staticcheck // necessary for Bitcoin address format
 )
 
 const (
@@ -118,10 +120,14 @@ var _ codec.AminoMarshaler = &PubKey{}
 
 // Address implements crypto.PubKey.
 func (pubKey PubKey) Address() crypto.Address {
-	// Use first 20 bytes of public key as address
-	addr := make([]byte, 20)
-	copy(addr, pubKey.Key[:20])
-	return addr
+	if len(pubKey.Key) != PublicKeyLen {
+		panic("length of pubkey is incorrect")
+	}
+
+	sha := sha256.Sum256(pubKey.Key)
+	hasherRIPEMD160 := ripemd160.New()
+	hasherRIPEMD160.Write(sha[:]) // does not error
+	return crypto.Address(hasherRIPEMD160.Sum(nil))
 }
 
 // Bytes returns the byte representation of the PubKey.
